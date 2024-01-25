@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title th:text="${title}"></title>
+  <meta http-equiv="Content-Type" 
+    content="text/html; charset=UTF-8" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+    rel="stylesheet">
+</head>
+
+<body class="container">
+  <!--タイトル-->
+  <h1 class="display-4 mb-4">edit Person.</h1>
+  <p>Can I save this record?</p>
+  <!--入力フォーム-->
+  <form method="post" action="/edit" th:object="${account}">
+    <!--該当レコードを検索-->
+    <input type="hidden" name="id" th:value="*{id}" />
+    <!--名前-->
+    <div class="mb-3">
+      <label for="name" class="form-label">Name</label>
+      <input type="text" class="form-control" 
+          name="name" th:value="*{name}" />
+    </div>
+    <!--値段-->
+    <div class="mb-3">
+      <label for="price" class="form-label">Price</label>
+      <input type="number" class="form-control" 
+          name="price"  th:value="*{price}" />
+    </div>
+    <!-- カテゴリー -->
+    <div class="mb-3">
+      <label for="category" class="form-label">Category</label>
+      <select class="form-control" name="category" th:field="*{category}">
+          <option th:each="category : ${categories}"
+                  th:value="${category.id}"
+                  th:text="${category.categoryName}">
+          </option>
+      </select>
+  </div>
+    <!--日付-->
+    <div class="mb-3">
+      <label for="date" class="form-label">Date</label>
+      <input type="date" class="form-control" 
+          name="date"  th:value="*{date}" />
+    </div>
+    <!--アップデート-->
+    <input type="submit"  class="btn btn-primary"value="Update"/>
+  </form>
+</body>
+
+</html>

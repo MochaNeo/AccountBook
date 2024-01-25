@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title th:text="${title}"></title>
+  <meta http-equiv="Content-Type" 
+    content="text/html; charset=UTF-8" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet">
+</head>
+
+<body class="container">
+  <h1 class="display-4 mb-4">Delete Person.</h1>
+  <p>Can I delete this record?</p>
+  
+  <form method="post" action="/delete" th:object="${account}">
+    <input type="hidden" name="id" th:value="*{id}" />
+    <ul>
+      <li>名前：  <span th:text="*{name}"></span></li>
+      <li>値段：  <span th:text="*{price}"></span></li>
+      <li>カテゴリー： <span th:text="*{category.categoryName}"></span></li>
+      <li>日付：  <span th:text="*{date}"></span></li>
+    </ul>
+    <input type="submit"  class="btn btn-primary" value="Delete" />
+    <a th:href="@{/}" class="btn btn-secondary">Back</a>
+  </form>
+</body>
+
+</html>
