@@ -58,4 +58,14 @@ public class AccountService {
     public boolean isCategoryInUse(long categoryId) {
         return repository.existsByCategoryId(categoryId);
     }
+
+    //全ての支出のレコードを返す(balanceがfalseのもの)
+    public List<Account> getAllExpense() {
+        return repository.findByBalanceFalse();
+    }
+
+    //全ての収入のレコードを返す(balanceがtrueのもの)
+    public List<Account> getAllIncome() {
+        return repository.findByBalanceTrue();
+    }
 }

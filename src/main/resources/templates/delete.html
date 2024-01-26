@@ -15,14 +15,16 @@
   <form method="post" action="/delete" th:object="${account}">
     <input type="hidden" name="id" th:value="*{id}" />
     <ul>
-      <li>名前：  <span th:text="*{name}"></span></li>
-      <li>値段：  <span th:text="*{price}"></span></li>
-      <li>カテゴリー： <span th:text="*{category.categoryName}"></span></li>
-      <li>日付：  <span th:text="*{date}"></span></li>
+        <li>収支： <span th:text="${account.balance == true ? '収入' : '支出'}"></span></li>
+        <li>名前： <span th:text="*{name}"></span></li>
+        <li>値段： <span th:text="*{price}"></span></li>
+        <li>カテゴリー： <span th:text="*{category.categoryName}"></span></li>
+        <li>日付： <span th:text="*{date}"></span></li>
     </ul>
-    <input type="submit"  class="btn btn-primary" value="Delete" />
-    <a th:href="@{/}" class="btn btn-secondary">Back</a>
-  </form>
+    <input type="submit" class="btn btn-primary" value="Delete" />
+    <a th:href="@{/edit/{id}(id=${id})}" class="btn btn-secondary">Back</a>
+</form>
+
 </body>
 
 </html>

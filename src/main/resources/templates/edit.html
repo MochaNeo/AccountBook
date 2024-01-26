@@ -16,6 +16,20 @@
   <form method="post" action="/edit" th:object="${account}">
     <!--該当レコードを検索-->
     <input type="hidden" name="id" th:value="*{id}" />
+    <!-- 収支の選択 -->
+    <div class="mb-3">
+      <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+
+          <input type="radio" class="btn-check" name="balance" 
+              th:value=false id="expense" autocomplete="off" th:checked="${account.balance == false}" />
+          <label class="btn btn-outline-primary" for="expense">Expense</label>
+            
+          <input type="radio" class="btn-check" name="balance" 
+              th:value=true id="income" autocomplete="off" th:checked="${account.balance == true}" />
+          <label class="btn btn-outline-primary" for="income">Income</label>
+
+      </div>
+    </div>
     <!--名前-->
     <div class="mb-3">
       <label for="name" class="form-label">Name</label>
@@ -46,6 +60,10 @@
     </div>
     <!--アップデート-->
     <input type="submit"  class="btn btn-primary"value="Update"/>
+    <!--削除-->
+    <a th:href="@{/delete/{id}(id=${id})}" class="btn btn-danger">Delete</a>
+    <!--戻る-->
+    <a th:href="@{/}" class="btn btn-secondary">back</a>
   </form>
 </body>
 

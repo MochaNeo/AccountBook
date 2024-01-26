@@ -38,20 +38,36 @@ public class AccountController {
         return mav;
     }
 
-    //ホーム画面（account追加）(post)
-    @PostMapping
+    //account追加画面(get)
+    @GetMapping("/add")
+    public ModelAndView add(@ModelAttribute Account account, ModelAndView mav) {
+        //add.htmlに遷移
+        mav.setViewName("add");
+        //カテゴリのリストをモデルに追加
+        List<Category> categories = categoryService.getAllCategories();
+        mav.addObject("categories", categories);
+        return mav;
+	}
+
+    //account追加画面(post)
+    @PostMapping("/add")
     @Transactional
     public ModelAndView form(@ModelAttribute @Validated Account account, BindingResult result, ModelAndView mav) {
         //空のmavを作成
         ModelAndView res;
+        System.out.println("test");
         //エラーがなければ追加し、indexに戻る
         if (!result.hasErrors()) {
             accountService.saveAccount(account);
+            System.out.println("success!");
             res = new ModelAndView("redirect:/");
         //エラーがあればエラーメッセージを表示しindexに戻る
         } else {
-            mav.setViewName("index");
-            addAccountAttributes(mav);
+            System.out.println("error!");
+            mav.setViewName("add");
+            //カテゴリのリストをモデルに追加
+            List<Category> categories = categoryService.getAllCategories();
+            mav.addObject("categories", categories);
             res = mav;
         }
         return res;
@@ -61,16 +77,26 @@ public class AccountController {
     private void addAccountAttributes(ModelAndView mav) {
         //全てのレコードをviewにわたす
         List<Account> list = accountService.getAllAccounts();
-        mav.addObject("data", list);
-        //全てのpriceの総額をviewに渡す
-        int totalPrice = accountService.calculateTotalPrice();
-        mav.addObject("totalPrice", totalPrice);
-        //全てのexpenseの総額をviewに渡す
+        mav.addObject("total", list);
+        //全てのexpenseのレコードをviewに渡す
         int totalExpense = accountService.calculateTotalExpense();
         mav.addObject("totalExpense", totalExpense);
-        //全てのincomeの総額をviewに渡す
+        //全てのincomeのレコードをviewに渡す
         int totalIncome = accountService.calculateTotalIncome();
         mav.addObject("totalIncome", totalIncome);
+
+
+        //全ての支出の総額をviewにわたす
+        List<Account> expenseList = accountService.getAllExpense();
+        mav.addObject("expense", expenseList);
+        //全ての収入の総額をviewにわたす
+        List<Account> incomeList = accountService.getAllIncome();
+        mav.addObject("income", incomeList);
+        //全ての収支の総額をviewに渡す
+        int totalPrice = accountService.calculateTotalPrice();
+        mav.addObject("totalPrice", totalPrice);
+
+        
         //カテゴリのリストをモデルに追加
         List<Category> categories = categoryService.getAllCategories();
         mav.addObject("categories", categories);

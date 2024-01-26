@@ -26,7 +26,6 @@ public class Account {
   private long id;
 
   @Column(nullable = false)
-  @NotNull(message = "収支を選択してください")
   private boolean balance;
 
   @Column(length = 50, nullable = false)

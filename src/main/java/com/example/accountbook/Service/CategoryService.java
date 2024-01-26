@@ -34,8 +34,37 @@ public class CategoryService {
     //カテゴリーのデフォルトデータを作成する(データベースに保存)
     @PostConstruct
     public void init() {
-        Category initial = new Category();
-        initial.setCategoryName("-");
-        repository.saveAndFlush(initial);
+        //食費
+        Category eat = new Category();
+        eat.setCategoryName("食費");
+        repository.saveAndFlush(eat);
+        //交通費
+        Category traffic = new Category();
+        traffic.setCategoryName("交通費");
+        repository.saveAndFlush(traffic);
+        //日用品
+        Category daily = new Category();
+        daily.setCategoryName("日用品");
+        repository.saveAndFlush(daily);
+        //ファッション・美容
+        Category fashion = new Category();
+        fashion.setCategoryName("ファッション・美容");
+        repository.saveAndFlush(fashion);
+        //住居・通信
+        Category residence = new Category();
+        residence.setCategoryName("住居・通信");
+        repository.saveAndFlush(residence);
+        //趣味・娯楽
+        Category hobby = new Category();
+        hobby.setCategoryName("趣味・娯楽");
+        repository.saveAndFlush(hobby);
+        //交際費・会費
+        Category money = new Category();
+        money.setCategoryName("交際費・会費");
+        repository.saveAndFlush(money);
+        //その他
+        Category other = new Category();
+        other.setCategoryName("その他");
+        repository.saveAndFlush(other);
     }
 }
