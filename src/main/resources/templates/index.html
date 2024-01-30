@@ -1,27 +1,22 @@
 <!DOCTYPE HTML>
 <html>
 
-<head>
+<head> 
     <title>Top Page</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
-    <!-- FullCalendar styles -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
-    <!-- Tippy styles -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tippy.js/6.3.6/tippy.css" />
+        
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <!-- Bootstrap JS (Popper.js and Bootstrap JS) -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Moment.js (FullCalendar requires it) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
     <!-- FullCalendar script -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
-    <!-- Tippy script -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tippy.js/6.3.6/tippy-bundle.umd.min.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+
 </head>
 
 
@@ -126,20 +121,19 @@
                     </ul>
                     
                     <div class="tab-content mt-2">
-                        <!--日付-->
+                        <!-- 日付 -->
                         <div class="container">
                             <h4 class="display-6 mb-2" id="currentDate"></h4>
-                            <script>
-                                var today = new Date();
-                                var year = today.getFullYear();
-                                var month = (today.getMonth() + 1).toString().padStart(2, '0');
-                                var day = today.getDate().toString().padStart(2, '0');
-                                var formattedDate = year + '/' + month + '/' + day;
-                                document.getElementById('currentDate').innerText = formattedDate;
-                            </script>
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <button type="button" class="btn btn-primary" onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i> </button>
+                                <button type="button" class="btn btn-primary" onclick="changeDate(-1)"><i class="fas fa-chevron-left"></i> </button>
+                                <button type="button" class="btn btn-primary" onclick="updateToday()"><i class="fas fa-calendar-day"></i> </button>
+                                <button type="button" class="btn btn-primary" onclick="changeDate(1)"> <i class="fas fa-chevron-right"></i></button>
+                                <button type="button" class="btn btn-primary" onclick="changeMonth(1)"> <i class="fas fa-chevron-right"></i></button>
+                            </div>
                         </div>
+
                         <div class="tab-pane fade show active" id="total">
-                            
                             <!-- テーブル一覧（収支） -->
                             <table class="table">
                                 <thead>
@@ -154,19 +148,18 @@
                                 </thead>
                                 <tbody>
                                     <tr th:each="item : ${total}">
-                                        <td th:text="${item.balance ? 'Income' : 'Expense'}" th:style="${item.balance ? 'color: blue;' : 'color: red;'}"></td>
+                                        <td th:text="${item.balance ? 'Income' : 'Expense'}" 
+                                            th:style="${item.balance ? 'color: blue;' : 'color: red;'}"></td>
                                         <td th:text="${item.name}"></td>
                                         <td th:text="${item.price}"></td>
-                                        <td th:text="${item.date}"></td>
+                                        <td class="date-cell" th:text="${item.date}"></td>
                                         <td th:text="${item.category.categoryName}"></td>
                                         <td>
                                             <a th:href="@{/edit/{id}(id=${item.id})}" class="btn btn-secondary">Detail</a>
                                         </td>
-                                    </tr>
+                                    </tr>                                    
                                 </tbody>
-                                
                             </table>
-                            
                         </div>
                         
                         <div class="tab-pane fade" id="expense">
@@ -189,7 +182,7 @@
                                         </td>
                                         <td th:text="${item.name}"></td>
                                         <td th:text="${item.price}"></td>
-                                        <td th:text="${item.date}"></td>
+                                        <td class="date-cell" th:text="${item.date}"></td>
                                         <td th:text="${item.category.categoryName}"></td>
                                         <td>
                                             <a th:href="@{/edit/{id}(id=${item.id})}" class="btn btn-secondary">Detail</a>
@@ -219,7 +212,7 @@
                                         </td>
                                         <td th:text="${item.name}"></td>
                                         <td th:text="${item.price}"></td>
-                                        <td th:text="${item.date}"></td>
+                                        <td class="date-cell" th:text="${item.date}"></td>
                                         <td th:text="${item.category.categoryName}"></td>
                                         <td>
                                             <a th:href="@{/edit/{id}(id=${item.id})}" class="btn btn-secondary">Detail</a>
@@ -235,8 +228,30 @@
 
             <!--テーブルタブ（月）-->
             <div class="tab-pane fade" id="month">
-                
-            </div>
+                <div class="container mt-4">
+                    <div id='calendar'>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var calendarEl = document.getElementById('calendar');
+                                var calendar = new FullCalendar.Calendar(calendarEl, {
+                                initialView: 'dayGridMonth',// オプション　（月表示）
+                                dateClick: function(info) {
+                                    // クリックされた日付を取得
+                                    var clickedDate = info.date;
+                                    // 日付から日付部分だけを取り出す
+                                    var formattedDate = clickedDate.toISOString().split('T')[0];
+                                    // dayタブを開く
+                                    document.getElementById('day-tab').click();
+                                    // 日付を表示
+                                    document.getElementById('currentDate').innerText = formattedDate;
+                                }
+                                });
+                                calendar.render(); // カレンダーの初期化（再レンダリング）
+                            });
+                        </script>
+                    </div>                    
+                </div>
+            </div>            
 
             <!--テーブルタブ（年）-->
             <div class="tab-pane fade" id="year">
@@ -247,35 +262,71 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    <script>
+        var currentDateElement = document.getElementById('currentDate');
+        var currentDate = new Date();
     
+        function updateDate() {
+            var year = currentDate.getFullYear();
+            var month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+            var day = currentDate.getDate().toString().padStart(2, '0');
+            var formattedDate = year + '-' + month + '-' + day;
+            currentDateElement.textContent = formattedDate;
+            filterTableByDate();
+            //現在の日付 (currentDate) を取得し、年 (getFullYear)、月 (getMonth)、日 (getDate) をフォーマットして画面に表示する。
+            //その後、filterTableByDate関数を呼び出して、テーブルの内容をフィルタリングする。
+        }
+    
+        function changeMonth(months) {
+            currentDate.setMonth(currentDate.getMonth() + months);
+            updateDate();
+            //現在の日付から指定された月数を加減する (setMonthメソッドを使用)。
+            //月の変更後、updateDate関数を呼び出して、画面上の日付とテーブルの内容を更新する。
+        }
+    
+        function changeDate(days) {
+            currentDate.setDate(currentDate.getDate() + days);
+            updateDate();
+            //現在の日付に指定された日数を加減する (setDateメソッドを使用)。
+            //日の変更後、updateDate関数を呼び出して、画面上の日付とテーブルの内容を更新する。
+        }
+    
+        function updateToday() {
+            currentDate = new Date();
+            updateDate();
+            //現在の日付を今日の日付にリセットする。
+            //日付のリセット後、updateDate関数を呼び出して、画面上の日付とテーブルの内容を更新する。
+        }
+    
+        function filterTableByDate() {
+            //currentDateElement（HTML要素）のテキストコンテンツ
+            //（すなわち、現在画面上に表示されている日付）を取得し、selectedDate変数に格納する。
+            var selectedDate = currentDateElement.textContent;
+            //CSSセレクタを使ってページ上のすべてのテーブル行を取得する。
+            //.table tbody trセレクタは、クラスがtableの要素内のtbodyセクションにあるすべてのtr（行）を指す。
+            var tableRows = document.querySelectorAll('.table tbody tr');
+            //forEachループを使って、取得した各行（tr要素）に対して処理を行う。
+            //各行から、クラス名がdate-cellの要素（日付を表示するセル）を取得し、そのテキストコンテンツ（行の日付）をrowDateに格納する。
+            //if文を使って、行の日付(rowDate)が現在選択されている日付(selectedDate)と一致するかどうかをチェックする。
+            //一致する場合: 行を表示状態にする（row.style.display = ''）。これは、行のdisplayスタイルをデフォルト（通常はtable-row）に戻すことを意味する。
+            //一致しない場合: 行を非表示にする（row.style.display = 'none'）。これにより、その行は画面上から消える。
+            tableRows.forEach(function(row) {
+                var rowDate = row.querySelector('.date-cell').textContent;
+                if (rowDate === selectedDate) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            //現在表示されている日付 (currentDateElement.textContent) とテーブルの各行の日付 (row.querySelector('.date-cell').textContent) を比較する。
+            //日付が一致する行のみを表示し (row.style.display = '')、一致しない行は非表示にする (row.style.display = 'none')。
+        }
+    
+        updateDate(); // 最初のロード時に日付を更新
 
-
-<!-- Optional JavaScript -->
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+        //スクリプトの流れ
+        //ページがロードされると、updateDate関数が最初に呼び出され、現在の日付が画面に表示され、テーブルが初期フィルタリングされる。
+        //ユーザーが日付を変更するボタン (changeMonth, changeDate, updateToday) を押すと、それぞれの関数が呼び出され、日付が更新され、updateDateが再度呼び出されてテーブルが再フィルタリングされる。
+    </script>
 </body>
 </html>

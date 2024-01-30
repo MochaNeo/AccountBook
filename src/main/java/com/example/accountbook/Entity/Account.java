@@ -1,5 +1,7 @@
 package com.example.accountbook.Entity;
 
+import java.sql.Date;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -38,7 +40,7 @@ public class Account {
 
   @Column(nullable = false)
   @NotNull(message = "日付を入力してください")
-  private String date;
+  private Date date;
 
   @ManyToOne
   @JoinColumn(name = "category_id")
