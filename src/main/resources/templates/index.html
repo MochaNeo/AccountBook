@@ -124,6 +124,9 @@
                         <!-- 日付 -->
                         <div class="container">
                             <h4 class="display-6 mb-2" id="currentDate"></h4>
+                            <p id="dayIncome"></p>
+                            <p id="dayExpense"></p>
+                            <p id="dayTotal"></p>
                             <div class="btn-group" role="group" aria-label="Basic example">
                                 <button type="button" class="btn btn-primary" onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i> </button>
                                 <button type="button" class="btn btn-primary" onclick="changeDate(-1)"><i class="fas fa-chevron-left"></i> </button>
@@ -147,7 +150,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr th:each="item : ${total}">
+                                    <tr th:each="item : ${total}" data-balance="${item.balance}">
                                         <td th:text="${item.balance ? 'Income' : 'Expense'}" 
                                             th:style="${item.balance ? 'color: blue;' : 'color: red;'}"></td>
                                         <td th:text="${item.name}"></td>
@@ -176,16 +179,16 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr th:each="item : ${expense}">
-                                        <td th:text="${item.balance ? 'Income' : 'Expense'}"
-                                            th:style="${item.balance ? 'color: blue;' : 'color: red;'}">
+                                    <tr th:each="expenseItem : ${expense}">
+                                        <td class="balance-cell" th:text="${expenseItem.balance ? 'Income' : 'Expense'}"
+                                            th:style="${expenseItem.balance ? 'color: blue;' : 'color: red;'}">
                                         </td>
-                                        <td th:text="${item.name}"></td>
-                                        <td th:text="${item.price}"></td>
-                                        <td class="date-cell" th:text="${item.date}"></td>
-                                        <td th:text="${item.category.categoryName}"></td>
+                                        <td th:text="${expenseItem.name}"></td>
+                                        <td th:text="${expenseItem.price}"></td>
+                                        <td th:text="${expenseItem.date}"></td>
+                                        <td th:text="${expenseItem.category.categoryName}"></td>
                                         <td>
-                                            <a th:href="@{/edit/{id}(id=${item.id})}" class="btn btn-secondary">Detail</a>
+                                            <a th:href="@{/edit/{id}(id=${expenseItem.id})}" class="btn btn-secondary">Detail</a>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -206,16 +209,16 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr th:each="item : ${income}">
-                                        <td th:text="${item.balance ? 'Income' : 'Expense'}"
-                                            th:style="${item.balance ? 'color: blue;' : 'color: red;'}">
+                                    <tr th:each="incomeItem : ${income}">
+                                        <td class="balance-cell" th:text="${incomeItem.balance ? 'Income' : 'Expense'}"
+                                            th:style="${incomeItem.balance ? 'color: blue;' : 'color: red;'}">
                                         </td>
-                                        <td th:text="${item.name}"></td>
-                                        <td th:text="${item.price}"></td>
-                                        <td class="date-cell" th:text="${item.date}"></td>
-                                        <td th:text="${item.category.categoryName}"></td>
+                                        <td th:text="${incomeItem.name}"></td>
+                                        <td th:text="${incomeItem.price}"></td>
+                                        <td th:text="${incomeItem.date}"></td>
+                                        <td th:text="${incomeItem.category.categoryName}"></td>
                                         <td>
-                                            <a th:href="@{/edit/{id}(id=${item.id})}" class="btn btn-secondary">Detail</a>
+                                            <a th:href="@{/edit/{id}(id=${incomeItem.id})}" class="btn btn-secondary">Detail</a>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -237,13 +240,14 @@
                                 initialView: 'dayGridMonth',// オプション　（月表示）
                                 dateClick: function(info) {
                                     // クリックされた日付を取得
-                                    var clickedDate = info.date;
+                                    var clickedDate = new Date(info.date.getTime() - info.date.getTimezoneOffset() * 60000);
                                     // 日付から日付部分だけを取り出す
                                     var formattedDate = clickedDate.toISOString().split('T')[0];
                                     // dayタブを開く
                                     document.getElementById('day-tab').click();
                                     // 日付を表示
                                     document.getElementById('currentDate').innerText = formattedDate;
+                                    updateTotalPrice();
                                 }
                                 });
                                 calendar.render(); // カレンダーの初期化（再レンダリング）
@@ -273,6 +277,7 @@
             var formattedDate = year + '-' + month + '-' + day;
             currentDateElement.textContent = formattedDate;
             filterTableByDate();
+            updateTotalPrice();
             //現在の日付 (currentDate) を取得し、年 (getFullYear)、月 (getMonth)、日 (getDate) をフォーマットして画面に表示する。
             //その後、filterTableByDate関数を呼び出して、テーブルの内容をフィルタリングする。
         }
@@ -299,34 +304,42 @@
         }
     
         function filterTableByDate() {
-            //currentDateElement（HTML要素）のテキストコンテンツ
-            //（すなわち、現在画面上に表示されている日付）を取得し、selectedDate変数に格納する。
             var selectedDate = currentDateElement.textContent;
-            //CSSセレクタを使ってページ上のすべてのテーブル行を取得する。
-            //.table tbody trセレクタは、クラスがtableの要素内のtbodyセクションにあるすべてのtr（行）を指す。
-            var tableRows = document.querySelectorAll('.table tbody tr');
-            //forEachループを使って、取得した各行（tr要素）に対して処理を行う。
-            //各行から、クラス名がdate-cellの要素（日付を表示するセル）を取得し、そのテキストコンテンツ（行の日付）をrowDateに格納する。
-            //if文を使って、行の日付(rowDate)が現在選択されている日付(selectedDate)と一致するかどうかをチェックする。
-            //一致する場合: 行を表示状態にする（row.style.display = ''）。これは、行のdisplayスタイルをデフォルト（通常はtable-row）に戻すことを意味する。
-            //一致しない場合: 行を非表示にする（row.style.display = 'none'）。これにより、その行は画面上から消える。
+            var tableRows = document.querySelectorAll('#total .table tbody tr');
             tableRows.forEach(function(row) {
-                var rowDate = row.querySelector('.date-cell').textContent;
+                var rowDate = row.querySelector('#total .date-cell').textContent;
                 if (rowDate === selectedDate) {
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';
                 }
             });
-            //現在表示されている日付 (currentDateElement.textContent) とテーブルの各行の日付 (row.querySelector('.date-cell').textContent) を比較する。
-            //日付が一致する行のみを表示し (row.style.display = '')、一致しない行は非表示にする (row.style.display = 'none')。
         }
-    
-        updateDate(); // 最初のロード時に日付を更新
 
-        //スクリプトの流れ
-        //ページがロードされると、updateDate関数が最初に呼び出され、現在の日付が画面に表示され、テーブルが初期フィルタリングされる。
-        //ユーザーが日付を変更するボタン (changeMonth, changeDate, updateToday) を押すと、それぞれの関数が呼び出され、日付が更新され、updateDateが再度呼び出されてテーブルが再フィルタリングされる。
+        function updateTotalPrice() {
+            var income = 0;
+            var expense = 0;
+            var tableRows = document.querySelectorAll('#total .table tbody tr');
+            tableRows.forEach(function(row) {
+                if (row.style.display !== 'none') {
+                    var balanceText = row.querySelector('#total td:nth-child(1)').textContent; // balance カラムの値をテキストとして取得
+                    var priceText = row.querySelector('#total td:nth-child(3)').textContent;
+                    var price = parseFloat(priceText);
+
+                    if (balanceText === 'Income') {
+                        income += price;
+                    } else {
+                        expense += price;
+                    }
+                }
+            });
+            var total = income - expense;
+            document.getElementById('dayTotal').textContent = 'Total Price: ' + total;
+            document.getElementById('dayIncome').textContent = 'Income: ' + income;
+            document.getElementById('dayExpense').textContent = 'Expense: ' + expense;
+        }
+
+        updateDate();
     </script>
 </body>
 </html>
