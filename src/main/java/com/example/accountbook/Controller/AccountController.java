@@ -126,17 +126,6 @@ public class AccountController {
         return new ModelAndView("redirect:/");
     }
 
-    //データの削除(get)
-    @GetMapping("/delete/{id}")
-    public ModelAndView delete(@PathVariable long id, ModelAndView mav) {
-        //delete.htmlに遷移
-        mav.setViewName("delete");
-        //idに対応するAccountを取得し、formModelに渡す。(delete.htmlに渡す)
-        Optional<Account> data = accountService.getAccountById(id);
-        mav.addObject("account", data.get());
-        return mav;
-    }
-
     //データの削除(post)
     @PostMapping("/delete")
     @Transactional
@@ -146,4 +135,3 @@ public class AccountController {
         return new ModelAndView("redirect:/");
     }
 }
-

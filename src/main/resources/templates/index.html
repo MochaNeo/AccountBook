@@ -17,11 +17,13 @@
     <!-- FullCalendar script -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
 
+    <!-- jQuery の読み込み -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <style>.table th, .table td {width: 17%; /* カラムの数に応じて調整 */}</style>
 </head>
 
-
 <body class="container">
-
 
     <!--ナビゲーションバー-->
     <nav class="navbar navbar-expand-lg bg-body-tertiary mb-4">
@@ -78,17 +80,12 @@
         </div>
     </nav>
 
-
-    
-    
     <!--合計金額-->
     <div>
         <p>Totoal Income: <span th:text="${totalIncome}"></span>
             Total Expense: <span th:text="${totalExpense}"></span>
             Total Price: <span th:text="${totalPrice}"></span></p>
     </div>
-
-
 
     <!--テーブルタブ（大）-->
     <div class="container mt-4">
@@ -98,9 +95,6 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" id="month-tab" data-bs-toggle="tab" href="#month">Month</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="year-tab" data-bs-toggle="tab" href="#year">Year</a>
             </li>
         </ul>
         
@@ -123,22 +117,26 @@
                     <div class="tab-content mt-2">
                         <!-- 日付 -->
                         <div class="container">
-                            <h4 class="display-6 mb-2" id="currentDate"></h4>
-                            <p id="dayIncome"></p>
-                            <p id="dayExpense"></p>
-                            <p id="dayTotal"></p>
-                            <div class="btn-group" role="group" aria-label="Basic example">
-                                <button type="button" class="btn btn-primary" onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i> </button>
-                                <button type="button" class="btn btn-primary" onclick="changeDate(-1)"><i class="fas fa-chevron-left"></i> </button>
-                                <button type="button" class="btn btn-primary" onclick="updateToday()"><i class="fas fa-calendar-day"></i> </button>
-                                <button type="button" class="btn btn-primary" onclick="changeDate(1)"> <i class="fas fa-chevron-right"></i></button>
-                                <button type="button" class="btn btn-primary" onclick="changeMonth(1)"> <i class="fas fa-chevron-right"></i></button>
-                            </div>
-                        </div>
+                            <h4 class="display-6 mb-2 float-start" id="currentDate"></h4>
 
+                                <div class="btn-group float-end" role="group" aria-label="Basic example">
+                                    <button type="button" class="btn btn-primary" onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i> </button>
+                                    <button type="button" class="btn btn-primary" onclick="changeDate(-1)"><i class="fas fa-chevron-left"></i> </button>
+                                    <button type="button" class="btn btn-primary" onclick="updateToday()"><i class="fas fa-calendar-day"></i> </button>
+                                    <button type="button" class="btn btn-primary" onclick="changeDate(1)"> <i class="fas fa-chevron-right"></i></button>
+                                    <button type="button" class="btn btn-primary" onclick="changeMonth(1)"> <i class="fas fa-chevron-right"></i></button>
+                                </div>
+
+                                <li class="list-group list-group-horizontal float-end">
+                                    <ul class="list-group-item" id="dayIncome"></ul>
+                                    <ul class="list-group-item" id="dayExpense"></ul>
+                                    <ul class="list-group-item" id="dayTotal"></ul>
+                                </li>
+
+                        </div>
                         <div class="tab-pane fade show active" id="total">
                             <!-- テーブル一覧（収支） -->
-                            <table class="table">
+                            <table class="table table-borderless table-hover">
                                 <thead>
                                     <tr>
                                         <th>Balance</th>
@@ -164,10 +162,9 @@
                                 </tbody>
                             </table>
                         </div>
-                        
                         <div class="tab-pane fade" id="expense">
                             <!--テーブル一覧（支出）-->
-                            <table class="table">
+                            <table class="table table-borderless table-hover">
                                 <thead>
                                     <tr>
                                         <th>Balance</th>
@@ -194,10 +191,9 @@
                                 </tbody>
                             </table>
                         </div>
-
                         <div class="tab-pane fade" id="income">
                             <!--テーブル一覧（収入）-->
-                            <table class="table">
+                            <table class="table table-borderless table-hover">
                                 <thead>
                                     <tr>
                                         <th>Balance</th>
@@ -224,7 +220,6 @@
                                 </tbody>
                             </table>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -235,79 +230,179 @@
                     <div id='calendar'>
                         <script>
                             document.addEventListener('DOMContentLoaded', function() {
+                                //idに'calendar'を指定
                                 var calendarEl = document.getElementById('calendar');
+                                //曜日変更用の文字列を指定
+                                var DAY_NAMES = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+
                                 var calendar = new FullCalendar.Calendar(calendarEl, {
-                                initialView: 'dayGridMonth',// オプション　（月表示）
-                                dateClick: function(info) {
-                                    // クリックされた日付を取得
-                                    var clickedDate = new Date(info.date.getTime() - info.date.getTimezoneOffset() * 60000);
-                                    // 日付から日付部分だけを取り出す
-                                    var formattedDate = clickedDate.toISOString().split('T')[0];
-                                    // dayタブを開く
-                                    document.getElementById('day-tab').click();
-                                    // 日付を表示
-                                    document.getElementById('currentDate').innerText = formattedDate;
-                                    updateTotalPrice();
-                                }
+                                    //日本語化
+                                    locale: 'ja',
+
+                                    //曜日を英語にする
+                                    dayHeaderContent: function(arg) {
+                                        return DAY_NAMES[arg.date.getDay()]
+                                    },
+                                    
+                                    //高さは自動
+                                    showNonCurrentDates: false,
+                                    height: "auto",
+
+                                    //クリックイベントの設定
+                                    dateClick: function(info) {
+                                        //クリックされた日付を取得
+                                        var clickedDate = new Date(info.date.getTime() - info.date.getTimezoneOffset() * 60000);
+                                        //currentDate を更新
+                                        currentDate = clickedDate;
+                                         //updateDate を呼び出して画面を更新
+                                        updateDate();
+                                        //dayタブを開く
+                                        document.getElementById('day-tab').click();
+                                    },
+                                    dayCellContent: function(e) {
+                                        e.dayNumberText = e.dayNumberText.replace('日', '');
+                                        var dateStr = new Date(e.date.getTime() - e.date.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+                                        var cellContent = e.dayNumberText;
+                                        if (dailyAmounts[dateStr]) {
+                                            var amount = dailyAmounts[dateStr];
+                                            var totalColor = amount.total < 0 ? 'red' : (amount.total > 0 ? 'blue' : 'black');
+                                            cellContent += `<div class="day-amounts">
+                                                                <span class="total" style="color:${totalColor};">${amount.total}</span>
+                                                            </div>`;
+                                        }
+                                        return { html: cellContent };
+                                    }
+
+                                });
+                                // Bootstrap タブの 'shown.bs.tab' イベントに対応するハンドラを追加
+                                $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+                                    if (e.target.id === 'month-tab') { // month タブが選択された時
+                                        calendar.render(); // カレンダーをレンダリング
+                                    }
+                                });
+                                $('#calendar').fullCalendar({
+                                    height: window.innerHeight - 100,
+                                    windowResize: function () {
+                                        $('#calendar').fullCalendar('option', 'height', window.innerHeight - 100);
+                                    }
                                 });
                                 calendar.render(); // カレンダーの初期化（再レンダリング）
                             });
                         </script>
-                    </div>                    
+                        <style>
+                            .day-amounts {
+                                font-size: 0.75em; /* フォントサイズを小さく */
+                                text-align: left; /* テキストを左揃えに設定 */
+                                padding-left: 4px; /* 左側に少し余白を追加 */
+                            }
+
+                            .day-amounts span {
+                                display: block; /* 各要素をブロックとして表示 */
+                                margin: 1px 0; /* 上下の余白を小さく */
+                            }
+
+                            .fc .fc-scrollgrid {
+                            border-width: 0 0 0 0; /* 外側の枠線消す */
+                            font-size: 20px;
+                            font-weight: normal;
+                            }
+
+                            .fc-theme-standard td, .fc-theme-standard th {
+                            height: 60px;/* 枠の高さ指定 */
+                            border: none;/* 枠のボーダー消す */
+                            padding: 0 5px 5px;
+                            }
+
+                            /*　今日の背景 */
+                            .fc .fc-daygrid-day.fc-day-today {
+                            background: none;
+                            }
+
+                            .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-frame {
+                            background: rgba(49,159,141,0.1);
+                            }
+
+                            /* 日付を枠の高さいっぱいに */
+                            .fc .fc-daygrid-day-frame {
+                            height: 100%;
+                            }
+
+                            /* 日付を枠の中心に */
+                            .fc .fc-daygrid-day-top {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            text-align: center;
+                            min-height: 100%;
+                            }
+
+                            .fc .fc-bg-event {
+                            opacity: 1;
+                            }
+
+                            /* イベントタイトル非表示 */
+                            .fc .fc-bg-event .fc-event-title {
+                            display: none !important;
+                            }
+
+                            .fc .fc-daygrid-day-top,
+                            .fc .fc-daygrid-day-number {
+                                color: black; /* 文字色を黒（または希望の色）に変更 */
+                                border-bottom: none; /* ボーダーの削除 */
+                                text-decoration: none; /* アンダーラインの削除 */
+                            }
+                        </style>
+                    </div>
                 </div>
-            </div>            
-
-            <!--テーブルタブ（年）-->
-            <div class="tab-pane fade" id="year">
-
             </div>
         </div>
     </div>
 
-
-
     <script>
         var currentDateElement = document.getElementById('currentDate');
         var currentDate = new Date();
-    
+
+        var transactions = extractTransactionsFromTable();
+        var dailyAmounts = calculateDailyAmounts(transactions);
+
+        updateDate();
+
+        //現在の日付を取得し、年 、月 、日をフォーマットして画面に表示する。
         function updateDate() {
-            var year = currentDate.getFullYear();
-            var month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-            var day = currentDate.getDate().toString().padStart(2, '0');
-            var formattedDate = year + '-' + month + '-' + day;
+            // 現在の日付をフォーマットして画面に表示
+            var formattedDate = currentDate.toISOString().split('T')[0];
             currentDateElement.textContent = formattedDate;
+
+            // 以下の関数を呼び出して、テーブルのフィルタリングとトータル金額の更新を行う
             filterTableByDate();
             updateTotalPrice();
-            //現在の日付 (currentDate) を取得し、年 (getFullYear)、月 (getMonth)、日 (getDate) をフォーマットして画面に表示する。
-            //その後、filterTableByDate関数を呼び出して、テーブルの内容をフィルタリングする。
         }
-    
+
+
+        //現在の日付から指定された月数を加減する (setMonthメソッドを使用)。
         function changeMonth(months) {
             currentDate.setMonth(currentDate.getMonth() + months);
             updateDate();
-            //現在の日付から指定された月数を加減する (setMonthメソッドを使用)。
-            //月の変更後、updateDate関数を呼び出して、画面上の日付とテーブルの内容を更新する。
         }
     
+        //現在の日付に指定された日数を加減する (setDateメソッドを使用)。
         function changeDate(days) {
             currentDate.setDate(currentDate.getDate() + days);
             updateDate();
-            //現在の日付に指定された日数を加減する (setDateメソッドを使用)。
-            //日の変更後、updateDate関数を呼び出して、画面上の日付とテーブルの内容を更新する。
         }
-    
+
+        //現在の日付を今日の日付にリセットする。
         function updateToday() {
             currentDate = new Date();
             updateDate();
-            //現在の日付を今日の日付にリセットする。
-            //日付のリセット後、updateDate関数を呼び出して、画面上の日付とテーブルの内容を更新する。
         }
-    
+
+        //日付に該当するレコードのみを表示する
         function filterTableByDate() {
             var selectedDate = currentDateElement.textContent;
             var tableRows = document.querySelectorAll('#total .table tbody tr');
             tableRows.forEach(function(row) {
-                var rowDate = row.querySelector('#total .date-cell').textContent;
+                var rowDate = row.querySelector('.date-cell').textContent;
                 if (rowDate === selectedDate) {
                     row.style.display = '';
                 } else {
@@ -316,15 +411,16 @@
             });
         }
 
+
+        //日毎のイン、アウト、トータルを計算し表示する
         function updateTotalPrice() {
             var income = 0;
             var expense = 0;
             var tableRows = document.querySelectorAll('#total .table tbody tr');
             tableRows.forEach(function(row) {
                 if (row.style.display !== 'none') {
-                    var balanceText = row.querySelector('#total td:nth-child(1)').textContent; // balance カラムの値をテキストとして取得
-                    var priceText = row.querySelector('#total td:nth-child(3)').textContent;
-                    var price = parseFloat(priceText);
+                    var balanceText = row.querySelector('#total td:nth-child(1)').textContent;
+                    var price = parseFloat(row.querySelector('#total td:nth-child(3)').textContent);
 
                     if (balanceText === 'Income') {
                         income += price;
@@ -339,7 +435,36 @@
             document.getElementById('dayExpense').textContent = 'Expense: ' + expense;
         }
 
-        updateDate();
+        function calculateDailyAmounts() {
+            var dailyAmounts = {};
+            transactions.forEach(function(transaction) {
+                if (!dailyAmounts[transaction.date]) {
+                    dailyAmounts[transaction.date] = { income: 0, expense: 0, total: 0 };
+                }
+                if (transaction.balance === 'Income') {
+                    dailyAmounts[transaction.date].income += transaction.price;
+                } else {
+                    dailyAmounts[transaction.date].expense += transaction.price;
+                }
+                dailyAmounts[transaction.date].total = dailyAmounts[transaction.date].income - dailyAmounts[transaction.date].expense;
+            });
+            return dailyAmounts;
+        }
+
+
+        function extractTransactionsFromTable() {
+            var transactions = [];
+            var tableRows = document.querySelectorAll('#total .table tbody tr');
+            tableRows.forEach(function(row) {
+                var date = row.querySelector('.date-cell').textContent;
+                var balance = row.querySelector('td:nth-child(1)').textContent;
+                var price = parseFloat(row.querySelector('td:nth-child(3)').textContent);
+
+                transactions.push({ date: date, balance: balance, price: price });
+            });
+            return transactions;
+        }
     </script>
+
 </body>
 </html>
