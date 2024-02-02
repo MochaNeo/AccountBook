@@ -78,24 +78,12 @@ public class AccountController {
         //全てのレコードをviewにわたす
         List<Account> list = accountService.getAllAccounts();
         mav.addObject("total", list);
-        //全てのexpenseのレコードをviewに渡す
-        int totalExpense = accountService.calculateTotalExpense();
-        mav.addObject("totalExpense", totalExpense);
-        //全てのincomeのレコードをviewに渡す
-        int totalIncome = accountService.calculateTotalIncome();
-        mav.addObject("totalIncome", totalIncome);
-
-
-        //全ての支出の総額をviewにわたす
+        //全ての支出のレコードをviewにわたす
         List<Account> expenseList = accountService.getAllExpense();
         mav.addObject("expense", expenseList);
-        //全ての収入の総額をviewにわたす
+        //全ての収入のレコードをviewにわたす
         List<Account> incomeList = accountService.getAllIncome();
         mav.addObject("income", incomeList);
-        //全ての収支の総額をviewに渡す
-        int totalPrice = accountService.calculateTotalPrice();
-        mav.addObject("totalPrice", totalPrice);
-
         
         //カテゴリのリストをモデルに追加
         List<Category> categories = categoryService.getAllCategories();
@@ -133,5 +121,28 @@ public class AccountController {
         //accountを上書き保存し、index.htmlに遷移する
         accountService.deleteAccount(id);
         return new ModelAndView("redirect:/");
+    }
+
+    //検索(get)
+    @GetMapping("/search")
+    public ModelAndView search(@ModelAttribute Account account, ModelAndView mav) {
+        //add.htmlに遷移
+        mav.setViewName("search");
+        //カテゴリのリストをモデルに追加
+        List<Category> categories = categoryService.getAllCategories();
+        mav.addObject("categories", categories);
+        return mav;
+	}
+
+    //検索(post)
+    @PostMapping("/search")
+    public ModelAndView form(@ModelAttribute @Validated Account account,  ModelAndView mav) {
+        //空のmavを作成
+        ModelAndView res;
+        System.out.println("test");
+            accountService.saveAccount(account);
+            System.out.println("success!");
+            res = new ModelAndView("redirect:/");
+        return res;
     }
 }

@@ -16,27 +16,19 @@ public class AccountService {
     private AccountRepository repository;
 
 
-    //全てのaccountを返す
+    //全てのレコードを返す
     public List<Account> getAllAccounts() {
         return repository.findAll();
     }
-
-    //合計金額を返す(nullの場合は0を返す)
-    public int calculateTotalPrice() {
-        Integer totalPriceFromRepository = repository.getTotalPrice();
-        return totalPriceFromRepository;
+        
+    //全ての支出のレコードを返す(balanceがfalseのもの)
+    public List<Account> getAllExpense() {
+        return repository.findByBalanceFalse();
     }
 
-    //expenseの総額を返す(nullの場合は0を返す)
-    public int calculateTotalExpense() {
-        Integer totalExpenseFromRepository = repository.getExpenseTotal();
-        return totalExpenseFromRepository;
-    }
-
-    //incomeの総額を返す(nullの場合は0を返す)
-    public int calculateTotalIncome() {
-        Integer totalIncomeFromRepository = repository.getIncomeTotal();
-        return totalIncomeFromRepository;
+    //全ての収入のレコードを返す(balanceがtrueのもの)
+    public List<Account> getAllIncome() {
+        return repository.findByBalanceTrue();
     }
 
     //アカウントを保存する
@@ -57,15 +49,5 @@ public class AccountService {
     //カテゴリーが使われているかどうか確認する(true:使われている false:使われていない)
     public boolean isCategoryInUse(long categoryId) {
         return repository.existsByCategoryId(categoryId);
-    }
-
-    //全ての支出のレコードを返す(balanceがfalseのもの)
-    public List<Account> getAllExpense() {
-        return repository.findByBalanceFalse();
-    }
-
-    //全ての収入のレコードを返す(balanceがtrueのもの)
-    public List<Account> getAllIncome() {
-        return repository.findByBalanceTrue();
     }
 }

@@ -26,10 +26,10 @@
 <body class="container">
 
     <!--ナビゲーションバー-->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary mb-4">
+    <nav class="navbar navbar-expand-lg mb-4 ">
         <div class="container-fluid">
             <!--タイトル-->
-            <a class="navbar-brand" th:href="@{/}" role="button">AccountBook</a>
+            <a class="navbar-brand fw-bolder link-dark fs-2" th:href="@{/}" role="button">AccountBook</a>
                 <!--ハンバーガーボタン-->
                 <button class="navbar-toggler navbar-light" type="button" 
                 data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" 
@@ -53,43 +53,17 @@
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/add}" role="button">Add</a>
                     </li>
-                    <!--統計ページ-->
-                    <!-- <li class="nav-item">
-                        <a class="nav-link" th:href="#" role="button">Statistics</a>
-                    </li> -->
-                    <!--ドロップダウン-->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" 
-                            href="#" role="button" data-bs-toggle="dropdown" 
-                            aria-expanded="false">Dropdown</a>
-                        <!--内子-->
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        </ul>
+                    <!--アカウント追加ページ-->
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/search}" role="button">Search</a>
                     </li>
-                </ul>
-                <!--検索フォーム-->
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
             </div>
         </div>
     </nav>
 
-    <!--合計金額-->
-    <div>
-        <p>Totoal Income: <span th:text="${totalIncome}"></span>
-            Total Expense: <span th:text="${totalExpense}"></span>
-            Total Price: <span th:text="${totalPrice}"></span></p>
-    </div>
-
-    <!--テーブルタブ（大）-->
+    <!--タブ（大）-->
     <div class="container mt-4">
-        <ul class="nav nav-tabs">
+        <ul class="nav nav-pills nav-fill">
             <li class="nav-item active">
                 <a class="nav-link active" id="day-tab" data-bs-toggle="tab" href="#day">Day</a>
             </li>
@@ -97,12 +71,11 @@
                 <a class="nav-link" id="month-tab" data-bs-toggle="tab" href="#month">Month</a>
             </li>
         </ul>
-        
         <div class="tab-content mt-2">
-            <!--テーブルタブ（日）-->
+            <!--タブ（day）-->
             <div class="tab-pane fade show active" id="day">
                 <div class="container mt-4">
-                    <ul class="nav nav-tabs">
+                    <ul class="nav nav-pills nav-fill">
                         <li class="nav-item active">
                             <a class="nav-link active" id="total-tab" data-bs-toggle="tab" href="#total">Total</a>
                         </li>
@@ -113,38 +86,50 @@
                             <a class="nav-link" id="income-tab" data-bs-toggle="tab" href="#income">Income</a>
                         </li>
                     </ul>
-                    
                     <div class="tab-content mt-2">
+
                         <!-- 日付 -->
                         <div class="container">
-                            <h4 class="display-6 mb-2 float-start" id="currentDate"></h4>
-
-                                <div class="btn-group float-end" role="group" aria-label="Basic example">
+                            <h4 class="display-6 mb-2 float-start fw-bolder" id="currentDate"></h4>
+                                <!-- 日付変更ボタン -->
+                                <div class="btn-group float-end" role= "group" aria-label="Basic example">
                                     <button type="button" class="btn btn-primary" onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i> </button>
                                     <button type="button" class="btn btn-primary" onclick="changeDate(-1)"><i class="fas fa-chevron-left"></i> </button>
                                     <button type="button" class="btn btn-primary" onclick="updateToday()"><i class="fas fa-calendar-day"></i> </button>
                                     <button type="button" class="btn btn-primary" onclick="changeDate(1)"> <i class="fas fa-chevron-right"></i></button>
                                     <button type="button" class="btn btn-primary" onclick="changeMonth(1)"> <i class="fas fa-chevron-right"></i></button>
                                 </div>
-
+                                <!-- 日付の変更用スクリプト -->
+                                <script>
+                                    //現在の日付から指定された月数を加減する (setMonthメソッドを使用)。
+                                    function changeMonth(months) {
+                                        currentDate.setMonth(currentDate.getMonth() + months);
+                                        updateDate();
+                                    }
+                                    //現在の日付に指定された日数を加減する (setDateメソッドを使用)。
+                                    function changeDate(days) {
+                                        currentDate.setDate(currentDate.getDate() + days);
+                                        updateDate();
+                                    }
+                                    //現在の日付を今日の日付にリセットする。
+                                    function updateToday() {
+                                        currentDate = new Date();
+                                        updateDate();
+                                    }
+                                </script>
+                                <!--一日のincome, expense, totalの表示-->
                                 <li class="list-group list-group-horizontal float-end">
-                                    <ul class="list-group-item" id="dayIncome"></ul>
-                                    <ul class="list-group-item" id="dayExpense"></ul>
                                     <ul class="list-group-item" id="dayTotal"></ul>
+                                    <ul class="list-group-item" id="dayExpense"></ul>
+                                    <ul class="list-group-item" id="dayIncome"></ul>
                                 </li>
-
                         </div>
-                        <div class="tab-pane fade show active" id="total">
-                            <!-- テーブル一覧（収支） -->
-                            <table class="table table-borderless table-hover">
+
+                        <!-- テーブル一覧（収支） -->
+                        <div class="tab-pane fade show active mb-4" id="total">
+                            <table class="table table-borderless border-top border-bottom table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Balance</th>
-                                        <th>Name</th>
-                                        <th>Price</th>
-                                        <th>Date</th>
-                                        <th>Category</th>
-                                        <th>Edit</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -162,76 +147,79 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="tab-pane fade" id="expense">
-                            <!--テーブル一覧（支出）-->
-                            <table class="table table-borderless table-hover">
+
+                        <!--テーブル一覧（支出）-->
+                        <div class="tab-pane fade mb-4" id="expense">
+                            <table class="table table-borderless border-top border-bottom table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Balance</th>
-                                        <th>Name</th>
-                                        <th>Price</th>
-                                        <th>Date</th>
-                                        <th>Category</th>
-                                        <th>Edit</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr th:each="expenseItem : ${expense}">
-                                        <td class="balance-cell" th:text="${expenseItem.balance ? 'Income' : 'Expense'}"
-                                            th:style="${expenseItem.balance ? 'color: blue;' : 'color: red;'}">
-                                        </td>
-                                        <td th:text="${expenseItem.name}"></td>
-                                        <td th:text="${expenseItem.price}"></td>
-                                        <td th:text="${expenseItem.date}"></td>
-                                        <td th:text="${expenseItem.category.categoryName}"></td>
+                                    <tr th:each="item : ${expense}" data-balance="${item.balance}">
+                                        <td th:text="${item.balance ? 'Income' : 'Expense'}" 
+                                            th:style="${item.balance ? 'color: blue;' : 'color: red;'}"></td>
+                                        <td th:text="${item.name}"></td>
+                                        <td th:text="${item.price}"></td>
+                                        <td class="date-cell" th:text="${item.date}"></td>
+                                        <td th:text="${item.category.categoryName}"></td>
                                         <td>
-                                            <a th:href="@{/edit/{id}(id=${expenseItem.id})}" class="btn btn-secondary">Detail</a>
+                                            <a th:href="@{/edit/{id}(id=${item.id})}" class="btn btn-secondary">Detail</a>
                                         </td>
-                                    </tr>
+                                    </tr>                                    
                                 </tbody>
                             </table>
                         </div>
-                        <div class="tab-pane fade" id="income">
-                            <!--テーブル一覧（収入）-->
-                            <table class="table table-borderless table-hover">
+
+                        <!--テーブル一覧（収入）-->
+                        <div class="tab-pane fade mb-4" id="income">
+                            <table class="table table-borderless border-top border-bottom table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Balance</th>
-                                        <th>Name</th>
-                                        <th>Price</th>
-                                        <th>Date</th>
-                                        <th>Category</th>
-                                        <th>Edit</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr th:each="incomeItem : ${income}">
-                                        <td class="balance-cell" th:text="${incomeItem.balance ? 'Income' : 'Expense'}"
-                                            th:style="${incomeItem.balance ? 'color: blue;' : 'color: red;'}">
-                                        </td>
-                                        <td th:text="${incomeItem.name}"></td>
-                                        <td th:text="${incomeItem.price}"></td>
-                                        <td th:text="${incomeItem.date}"></td>
-                                        <td th:text="${incomeItem.category.categoryName}"></td>
+                                    <tr th:each="item : ${income}">
+                                        <td th:text="${item.balance ? 'Income' : 'Expense'}" 
+                                            th:style="${item.balance ? 'color: blue;' : 'color: red;'}"></td>
+                                        <td th:text="${item.name}"></td>
+                                        <td th:text="${item.price}"></td>
+                                        <td class="date-cell" th:text="${item.date}"></td>
+                                        <td th:text="${item.category.categoryName}"></td>
                                         <td>
-                                            <a th:href="@{/edit/{id}(id=${incomeItem.id})}" class="btn btn-secondary">Detail</a>
+                                            <a th:href="@{/edit/{id}(id=${item.id})}" class="btn btn-secondary">Detail</a>
                                         </td>
-                                    </tr>
+                                    </tr>                                    
                                 </tbody>
                             </table>
                         </div>
                     </div>
+                    
+                    <!--追加-->
+                    <div class="d-grid gap-2">
+                        <a class="btn btn-outline-secondary" th:href="@{/add}">Add</a>
+                    </div>
                 </div>
             </div>
 
-            <!--テーブルタブ（月）-->
+            <!--タブ（month）-->
             <div class="tab-pane fade" id="month">
                 <div class="container mt-4">
-                    <div id='calendar'>
+                    <!--イン・アウトの表示-->
+                    <div class="float-end">
+                        <li class="list-group list-group-horizontal">
+                            <ul class="list-group-item" id="monthTotal"></ul>
+                            <ul class="list-group-item" id="monthExpense"></ul>
+                            <ul class="list-group-item" id="monthIncome"></ul>
+                        </li>
+                    </div>
+                    <div class="float-end" id='calendar'>
                         <script>
                             document.addEventListener('DOMContentLoaded', function() {
+
                                 //idに'calendar'を指定
                                 var calendarEl = document.getElementById('calendar');
+
                                 //曜日変更用の文字列を指定
                                 var DAY_NAMES = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
@@ -259,6 +247,7 @@
                                         //dayタブを開く
                                         document.getElementById('day-tab').click();
                                     },
+
                                     dayCellContent: function(e) {
                                         e.dayNumberText = e.dayNumberText.replace('日', '');
                                         var dateStr = new Date(e.date.getTime() - e.date.getTimezoneOffset() * 60000).toISOString().split('T')[0];
@@ -271,21 +260,28 @@
                                                             </div>`;
                                         }
                                         return { html: cellContent };
-                                    }
+                                    },
 
+                                    // 日付範囲が変更されたときのイベント
+                                    datesSet: function(dateInfo) {
+                                        updateMonthSummary(dateInfo.start, dateInfo.end);
+                                    }
                                 });
+
                                 // Bootstrap タブの 'shown.bs.tab' イベントに対応するハンドラを追加
                                 $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
                                     if (e.target.id === 'month-tab') { // month タブが選択された時
                                         calendar.render(); // カレンダーをレンダリング
                                     }
                                 });
+
                                 $('#calendar').fullCalendar({
                                     height: window.innerHeight - 100,
                                     windowResize: function () {
                                         $('#calendar').fullCalendar('option', 'height', window.innerHeight - 100);
                                     }
                                 });
+
                                 calendar.render(); // カレンダーの初期化（再レンダリング）
                             });
                         </script>
@@ -358,61 +354,57 @@
         </div>
     </div>
 
+
+
+
     <script>
         var currentDateElement = document.getElementById('currentDate');
         var currentDate = new Date();
 
-        var transactions = extractTransactionsFromTable();
-        var dailyAmounts = calculateDailyAmounts(transactions);
-
         updateDate();
 
-        //現在の日付を取得し、年 、月 、日をフォーマットして画面に表示する。
+        //日付、テーブル、total(日)を取得
         function updateDate() {
-            // 現在の日付をフォーマットして画面に表示
             var formattedDate = currentDate.toISOString().split('T')[0];
-            currentDateElement.textContent = formattedDate;
-
-            // 以下の関数を呼び出して、テーブルのフィルタリングとトータル金額の更新を行う
-            filterTableByDate();
+            document.getElementById('currentDate').textContent = formattedDate;
+            filterTableByDate('#total');
+            filterTableByDate('#expense');
+            filterTableByDate('#income');
             updateTotalPrice();
         }
 
-
-        //現在の日付から指定された月数を加減する (setMonthメソッドを使用)。
-        function changeMonth(months) {
-            currentDate.setMonth(currentDate.getMonth() + months);
-            updateDate();
-        }
-    
-        //現在の日付に指定された日数を加減する (setDateメソッドを使用)。
-        function changeDate(days) {
-            currentDate.setDate(currentDate.getDate() + days);
-            updateDate();
-        }
-
-        //現在の日付を今日の日付にリセットする。
-        function updateToday() {
-            currentDate = new Date();
-            updateDate();
-        }
-
-        //日付に該当するレコードのみを表示する
-        function filterTableByDate() {
-            var selectedDate = currentDateElement.textContent;
-            var tableRows = document.querySelectorAll('#total .table tbody tr');
+        //テーブルのバインディング
+        function filterTableByDate(tableId) {
+            var selectedDate = document.getElementById('currentDate').textContent;
+            var tableRows = document.querySelectorAll(tableId + ' .table tbody tr');
             tableRows.forEach(function(row) {
                 var rowDate = row.querySelector('.date-cell').textContent;
-                if (rowDate === selectedDate) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
+                row.style.display = rowDate === selectedDate ? '' : 'none';
             });
         }
 
+        //月のincome, expense, totalを取得
+        function updateMonthSummary(startDate, endDate) {
+            var monthIncome = 0;
+            var monthExpense = 0;
+            var monthTotal = 0;
+            transactions.forEach(function(transaction) {
+                var transactionDate = new Date(transaction.date);
+                if (transactionDate >= startDate && transactionDate < endDate) {
+                    if (transaction.balance === 'Income') {
+                        monthIncome += transaction.price;
+                    } else {
+                        monthExpense += transaction.price;
+                    }
+                }
+            });
+            monthTotal = monthIncome - monthExpense;
+            document.getElementById('monthIncome').textContent = 'Month Income: ' + monthIncome;
+            document.getElementById('monthExpense').textContent = 'Month Expense: ' + monthExpense;
+            document.getElementById('monthTotal').textContent = 'Month Total: ' + monthTotal;
+        }
 
-        //日毎のイン、アウト、トータルを計算し表示する
+        //日のincome, expense, totalを取得
         function updateTotalPrice() {
             var income = 0;
             var expense = 0;
@@ -421,7 +413,6 @@
                 if (row.style.display !== 'none') {
                     var balanceText = row.querySelector('#total td:nth-child(1)').textContent;
                     var price = parseFloat(row.querySelector('#total td:nth-child(3)').textContent);
-
                     if (balanceText === 'Income') {
                         income += price;
                     } else {
@@ -434,7 +425,21 @@
             document.getElementById('dayIncome').textContent = 'Income: ' + income;
             document.getElementById('dayExpense').textContent = 'Expense: ' + expense;
         }
-
+        
+        //カレンダーのtotalを取得
+        var transactions = extractTransactionsFromTable();
+        function extractTransactionsFromTable() {
+            var transactions = [];
+            var tableRows = document.querySelectorAll('#total .table tbody tr');
+            tableRows.forEach(function(row) {
+                var date = row.querySelector('.date-cell').textContent;
+                var balance = row.querySelector('td:nth-child(1)').textContent;
+                var price = parseFloat(row.querySelector('td:nth-child(3)').textContent);
+                transactions.push({ date: date, balance: balance, price: price });
+            });
+            return transactions;
+        }
+        var dailyAmounts = calculateDailyAmounts(transactions);
         function calculateDailyAmounts() {
             var dailyAmounts = {};
             transactions.forEach(function(transaction) {
@@ -449,20 +454,6 @@
                 dailyAmounts[transaction.date].total = dailyAmounts[transaction.date].income - dailyAmounts[transaction.date].expense;
             });
             return dailyAmounts;
-        }
-
-
-        function extractTransactionsFromTable() {
-            var transactions = [];
-            var tableRows = document.querySelectorAll('#total .table tbody tr');
-            tableRows.forEach(function(row) {
-                var date = row.querySelector('.date-cell').textContent;
-                var balance = row.querySelector('td:nth-child(1)').textContent;
-                var price = parseFloat(row.querySelector('td:nth-child(3)').textContent);
-
-                transactions.push({ date: date, balance: balance, price: price });
-            });
-            return transactions;
         }
     </script>
 

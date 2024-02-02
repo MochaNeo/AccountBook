@@ -13,17 +13,17 @@
 
 <body class="container">
 	
-	<!--ナビゲーションバー-->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary mb-4">
+    <!--ナビゲーションバー-->
+    <nav class="navbar navbar-expand-lg mb-4 ">
         <div class="container-fluid">
             <!--タイトル-->
-            <a class="navbar-brand" th:href="@{/}" role="button">AccountBook</a>
+            <a class="navbar-brand fw-bolder link-dark fs-2" th:href="@{/}" role="button">AccountBook</a>
                 <!--ハンバーガーボタン-->
                 <button class="navbar-toggler navbar-light" type="button" 
-                	data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" 
-                	aria-controls="navbarSupportedContent" aria-expanded="false" 
-                	aria-label="Toggle navigation">
-                    	<span class="navbar-toggler-icon"></span>
+                data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" 
+                aria-controls="navbarSupportedContent" aria-expanded="false" 
+                aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
                 </button>
             <!--コンテンツ-->
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -41,29 +41,10 @@
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/add}" role="button">Add</a>
                     </li>
-                    <!--統計ページ-->
-                    <!-- <li class="nav-item">
-                        <a class="nav-link" th:href="#" role="button">Statistics</a>
-                    </li> -->
-                    <!--ドロップダウン-->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" 
-                            href="#" role="button" data-bs-toggle="dropdown" 
-                            aria-expanded="false">Dropdown</a>
-                        <!--内子-->
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        </ul>
+                    <!--アカウント追加ページ-->
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/search}" role="button">Search</a>
                     </li>
-                </ul>
-                <!--検索フォーム-->
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
             </div>
         </div>
     </nav>

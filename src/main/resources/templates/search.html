@@ -51,7 +51,7 @@
     </nav>
 
     <!--タイトル-->
-    <h1 class="display-4 mb-4">Add</h1>
+    <h1 class="display-4 mb-4">Search</h1>
 
     <!--ホームに戻る-->
     <div class="mb-4">
@@ -75,26 +75,24 @@
 
             </div>
         </div>
-
+        
         <!--名前-->
         <div class="mb-3">
-            <label for="name" class="form-label">Name</label>
-            <input type="text" class="form-control" 
-                name="name" th:value="*{name}" />
-            <div class="text text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+            <label class="form-label" for="name">Name</label>
+            <input class="form-control" placeholder="title" type="text" name="searchName" th:field="*{searchName}">
         </div>
 
         <!--金額-->
         <div class="mb-3">
-            <label for="price" class="form-label">Price</label>
-            <input type="number" class="form-control" name="price" th:value="*{price}" />
-            <div class="text text-danger" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+            <label class="form-label" for="price">Price</label>
+            <input class="form-control" placeholder="price" type="number" name="searchName" th:field="*{price}">
         </div>
 
         <!-- カテゴリー -->
         <div class="mb-3">
             <label for="category" class="form-label">Category</label>
             <select class="form-control" name="category" th:field="*{category}">
+                <option value="0">-</option>
                 <option th:each="category : ${categories}"
                         th:value="${category.id}"
                         th:text="${category.categoryName}">
@@ -106,9 +104,8 @@
         <!--日付-->
         <div class="mb-3">
             <label for="date" class="form-label">Due Date</label>
-            <input type="date" class="form-control" 
+            <input type="date" class="form-control" th:field="*{date}"
                 name="date" id="date"/>
-            <div class="text text-danger" th:if="${#fields.hasErrors('date')}" th:errors="*{date}"></div>
             <script>
                 var today = new Date();
                 var year = today.getFullYear();
@@ -120,8 +117,7 @@
         </div>
 
         <!--作成ボタン-->
-        <input type="submit"  class="btn btn-primary" value="Create"/>
+        <input type="submit"  class="btn btn-primary" value="Search"/>
     </form>
-
 </body>
 </html>
