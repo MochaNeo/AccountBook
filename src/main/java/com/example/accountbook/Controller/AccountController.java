@@ -122,27 +122,4 @@ public class AccountController {
         accountService.deleteAccount(id);
         return new ModelAndView("redirect:/");
     }
-
-    //検索(get)
-    @GetMapping("/search")
-    public ModelAndView search(@ModelAttribute Account account, ModelAndView mav) {
-        //add.htmlに遷移
-        mav.setViewName("search");
-        //カテゴリのリストをモデルに追加
-        List<Category> categories = categoryService.getAllCategories();
-        mav.addObject("categories", categories);
-        return mav;
-	}
-
-    //検索(post)
-    @PostMapping("/search")
-    public ModelAndView form(@ModelAttribute @Validated Account account,  ModelAndView mav) {
-        //空のmavを作成
-        ModelAndView res;
-        System.out.println("test");
-            accountService.saveAccount(account);
-            System.out.println("success!");
-            res = new ModelAndView("redirect:/");
-        return res;
-    }
 }
