@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -36,7 +37,8 @@ public class Account {
 
   @Column(nullable = false)
   @NotNull(message = "値段を入力してください")
-  private Integer price;
+  @Min(value = 0, message = "値段は0円以上で入力してください")
+    private Integer price;
 
   @Column(nullable = false)
   @NotNull(message = "日付を入力してください")

@@ -1,5 +1,6 @@
 package com.example.accountbook.Controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,7 @@ import com.example.accountbook.Entity.Account;
 import com.example.accountbook.Entity.Category;
 import com.example.accountbook.Service.AccountService;
 import com.example.accountbook.Service.CategoryService;
+import com.example.accountbook.Service.SearchService;
 
 import jakarta.transaction.Transactional;
 
@@ -29,6 +31,8 @@ public class AccountController {
     private AccountService accountService;
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private SearchService searchService;
     
     //ホーム画面(get)
     @RequestMapping("/")
@@ -122,4 +126,47 @@ public class AccountController {
         accountService.deleteAccount(id);
         return new ModelAndView("redirect:/");
     }
+    
+    //検索する(post)
+    @PostMapping("/search")
+    public ModelAndView search(@RequestParam("name") String name, ModelAndView mav) {
+        mav.setViewName("search");
+        List<Account> searchResult = searchService.search(name);
+        mav.addObject("search", searchResult);
+        // searchResultのレコードの件数を取得してModelAndViewオブジェクトに追加
+        int count = searchResult.size();
+        mav.addObject("count", count);
+        // 文字列をそのまま返す
+        mav.addObject("name", name);
+        return mav;
+    }
+
+    //　統計用クラス(get)
+    @GetMapping("/stat")
+    public ModelAndView getstat(ModelAndView mav) {
+        //カテゴリー配列を作成
+        List<String> CategoryList = new ArrayList<String>();
+        //配列にカテゴリー名を全て代入する
+        for(int i = 0; i < categoryService.getAllCategories().size(); i++) {
+            CategoryList.add(categoryService.getAllCategories().get(i).getCategoryName());
+        }
+
+        //カテゴリごとの合計を入れる配列を作成
+        List<Integer> CategoryTotal =  new ArrayList<Integer>();
+        //配列にカテゴリーごとの値を代入する
+        for(int i = 0; i < categoryService.getAllCategories().size(); i++) {
+            CategoryTotal.add(0 + accountService.search(CategoryList.get(i)));
+        }
+
+        //Listを配列に変換
+        String CategoryListLabel[] = CategoryList.toArray(new String [CategoryList.size()]);
+        //totalを配列に変換
+        Integer CategoryTotalLabel[] = CategoryTotal.toArray(new Integer [CategoryTotal.size()]);
+        //モデルに追加
+        mav.addObject("CategoryList", CategoryListLabel);
+        mav.addObject("CategoryTotal", CategoryTotalLabel);
+        mav.setViewName("stat");
+        return mav;
+    }
+    
 }

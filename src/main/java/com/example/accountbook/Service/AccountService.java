@@ -50,4 +50,12 @@ public class AccountService {
     public boolean isCategoryInUse(long categoryId) {
         return repository.existsByCategoryId(categoryId);
     }
+
+    //検索処理の実行
+	public Integer search(String category) {
+        Integer result = repository.findTotalPriceByCategoryContaining(category);
+        return result != null ? result : 0; // nullでない場合はそのまま、nullの場合は0を返す
+	}
+
+    
 }

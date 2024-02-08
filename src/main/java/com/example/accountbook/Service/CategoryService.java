@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.accountbook.Entity.Account;
 import com.example.accountbook.Entity.Category;
 import com.example.accountbook.Repository.CategoryRepository;
 
@@ -16,9 +17,16 @@ public class CategoryService {
     @Autowired
     private CategoryRepository repository;
 
+
+
     //全てのカテゴリーを返す
     public List<Category> getAllCategories() {
         return repository.findAll();
+    }
+
+    //すべてのカテゴリーの名前を配列で返す
+    public List<String> getAllCategoriesName() {
+        return repository.findAllCategoryName();
     }
 
     //カテゴリーを保存する(データベースに保存)

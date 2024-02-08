@@ -3,6 +3,7 @@ package com.example.accountbook.Repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.example.accountbook.Entity.Account;
@@ -17,4 +18,14 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     //収入のレコードを全て検索する
     List<Account> findByBalanceTrue();
+
+    //名前が含まれるレコードを検索する
+    List<Account> findByNameContaining(String name);
+
+    //カテゴリーごとのpriceの合計を返す
+    @Query("SELECT SUM(a.price) FROM Account a WHERE a.category.categoryName = :name")
+    Integer findTotalPriceByCategoryContaining(String name);
+    
+    
+    
 }
