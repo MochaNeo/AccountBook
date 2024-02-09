@@ -12,6 +12,10 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query("SELECT c.categoryName FROM Category c")
     List<String> findAllCategoryName();
 
+    //支出のレコードを全て検索する
+    List<Category> findByBalanceFalse();
 
+    //収入のレコードを全て検索する
+    List<Category> findByBalanceTrue();
 
 }

@@ -59,6 +59,8 @@
 
 		<!--該当レコードを検索-->
 		<input type="hidden" name="id" th:value="*{id}" />
+		<input type="hidden" id="selectedBalanceType" th:value="${selectedBalanceType}" />
+		<input type="hidden" id="selectedCategoryId" th:value="${selectedCategoryId}" />
 
 		<!-- 収支の選択 -->
 		<div class="mb-3">
@@ -89,16 +91,55 @@
 				name="price"  th:value="*{price}" />
 		</div>
 
-		<!-- カテゴリー -->
-		<div class="mb-3">
-			<label for="category" class="form-label">Category</label>
-			<select class="form-control" name="category" th:field="*{category}">
-				<option th:each="category : ${categories}"
-					th:value="${category.id}"
-					th:text="${category.categoryName}">
-				</option>
-			</select>
-		</div>
+        <!-- カテゴリー -->
+        <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <select class="form-control" id="categorySelect" name="category"></select>
+            <div class="text text-danger" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></div>
+        </div>
+		<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				// selectedBalanceTypeの値を取得し、'true'なら'income'、そうでなければ'expense'を設定
+				const selectedBalanceType = document.getElementById('selectedBalanceType').value === 'true' ? 'income' : 'expense';
+
+				// 初期カテゴリーデータのフェッチをselectedBalanceTypeに基づいて実行
+				fetchCategoryData(selectedBalanceType);
+
+				// ラジオボタンの変更を監視し、変更があった場合にカテゴリーデータを再フェッチ
+				document.querySelectorAll('input[name="balance"]').forEach((elem) => {
+					elem.addEventListener('change', function() {
+						const categoryType = this.id; // 'expense' または 'income'
+						fetchCategoryData(categoryType);
+					});
+				});
+			});
+
+			function fetchCategoryData(categoryType) {
+				// サーバーから指定されたタイプのカテゴリーデータをフェッチ
+				const url = `/api/categories/${categoryType}`;
+				fetch(url)
+					.then(response => response.json())
+					.then(data => {
+						updateCategorySelect(data);
+					})
+					.catch(error => console.error('Error fetching category data:', error));
+			}
+
+			function updateCategorySelect(categories) {
+				const select = document.getElementById('categorySelect');
+				const selectedCategoryId = document.getElementById('selectedCategoryId').value;
+				select.innerHTML = ''; // 既存のオプションをクリア
+				categories.forEach(category => {
+					const option = new Option(category.categoryName, category.id);
+					// サーバーから渡されたカテゴリーIDと一致する場合、選択状態にする
+					if(category.id.toString() === selectedCategoryId) {
+						option.selected = true;
+					}
+					select.appendChild(option);
+				});
+			}
+
+		</script>		
 
 		<!--日付-->
 		<div class="mb-3">

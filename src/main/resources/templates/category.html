@@ -57,7 +57,23 @@
 
     <!--入力フォーム-->
     <form method="post" action="/category" th:object="${category}">
-        <!--カテゴリー入力-->
+
+        <!-- 収支の選択 -->
+        <div class="mb-3">
+            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+
+                <input type="radio" class="btn-check" name="balance" 
+                    th:value=false id="expense" autocomplete="off" checked>
+                <label class="btn btn-outline-primary" for="expense">Expense</label>
+              
+                <input type="radio" class="btn-check" name="balance" 
+                    th:value=true id="income" autocomplete="off">
+                <label class="btn btn-outline-primary" for="income">Income</label>
+
+            </div>
+        </div>
+
+        <!--名前-->
         <div class="mb-3">
             <label for="name" class="form-label">Category Name</label>
             <input type="text" class="form-control" 
@@ -80,24 +96,59 @@
     </form>
 
     <!--テーブル一覧-->
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Delete</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="item : ${data}">
-                <td th:text="${item.categoryName}"></td>
-                <td>
-                    <!-- データ属性にitem.idを設定 -->
-                    <button type="button" class="btn btn-danger btn-delete" th:data-name="${item.categoryName}" th:data-id="${item.id}">Delete</button>
-                </td>
-            </tr>
-        </tbody>
-        
-    </table>
+    <div class="container">
+        <div class="row">
+            <!-- 支出カテゴリーのテーブル -->
+            <div class="col">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Balance</th>
+                            <th>Name</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${expenseCategories}">
+                            <td th:text="${item.balance ? 'Income' : 'Expense'}" 
+                                th:style="${item.balance ? 'color: blue;' : 'color: red;'}"></td>
+                            <td th:text="${item.categoryName}"></td>
+                            <td>
+                                <!-- データ属性にitem.idを設定 -->
+                                <button type="button" class="btn btn-danger btn-delete" th:data-name="${item.categoryName}" th:data-id="${item.id}">Delete</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- 収入カテゴリーのテーブル -->
+            <div class="col">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Balance</th>
+                            <th>Name</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${incomeCategories}">
+                            <td th:text="${item.balance ? 'Income' : 'Expense'}" 
+                                th:style="${item.balance ? 'color: blue;' : 'color: red;'}"></td>
+                            <td th:text="${item.categoryName}"></td>
+                            <td>
+                                <!-- データ属性にitem.idを設定 -->
+                                <button type="button" class="btn btn-danger btn-delete" th:data-name="${item.categoryName}" th:data-id="${item.id}">Delete</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    
+    
 
 
 

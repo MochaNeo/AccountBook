@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.accountbook.Entity.Account;
+import com.example.accountbook.Entity.Category;
 import com.example.accountbook.Repository.AccountRepository;
+
+import jakarta.annotation.PostConstruct;
 
 @Service
 public class AccountService {
@@ -51,11 +54,9 @@ public class AccountService {
         return repository.existsByCategoryId(categoryId);
     }
 
-    //検索処理の実行
-	public Integer search(String category) {
+    //カテゴリーごとのpriceの合計を返す(categoryにcategoryNameが含まれるもののpriceの合計)
+	public Integer CategoryTotalPrice(String category) {
         Integer result = repository.findTotalPriceByCategoryContaining(category);
         return result != null ? result : 0; // nullでない場合はそのまま、nullの場合は0を返す
 	}
-
-    
 }

@@ -96,14 +96,44 @@
         <!-- カテゴリー -->
         <div class="mb-3">
             <label for="category" class="form-label">Category</label>
-            <select class="form-control" name="category" th:field="*{category}">
-                <option th:each="category : ${categories}"
-                        th:value="${category.id}"
-                        th:text="${category.categoryName}">
-                </option>
-            </select>
+            <select class="form-control" id="categorySelect" name="category"></select>
             <div class="text text-danger" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></div>
         </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // ラジオボタンの変更を監視
+                document.querySelectorAll('input[name="balance"]').forEach((elem) => {
+                    elem.addEventListener('change', function() {
+                        const categoryType = this.id; // 'expense' または 'income'
+                        fetchCategoryData(categoryType);
+                    });
+                });
+
+                // デフォルトで支出カテゴリーを表示
+                fetchCategoryData('expense');
+            });
+
+            function fetchCategoryData(categoryType) {
+                const url = `/api/categories/${categoryType}`; // 適切なエンドポイントを指定
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        updateCategorySelect(data);
+                    })
+                    .catch(error => console.error('Error fetching category data:', error));
+            }
+
+            function updateCategorySelect(categories) {
+                const select = document.getElementById('categorySelect');
+                select.innerHTML = ''; // 既存のオプションをクリア
+                categories.forEach(category => {
+                    // 'category.name' から 'category.categoryName' に修正してください
+                    const option = new Option(category.categoryName, category.id);
+                    select.appendChild(option);
+                });
+            }
+        </script>
+            
 
         <!--日付-->
         <div class="mb-3">

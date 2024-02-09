@@ -7,7 +7,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,8 +19,10 @@ public class Category {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column
-  @NotNull
   private long id;
+
+  @Column(nullable = false)
+  private boolean balance;
 
   @Column(length = 50, nullable = false)
   @NotBlank

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -47,11 +48,28 @@ public class AccountController {
     public ModelAndView add(@ModelAttribute Account account, ModelAndView mav) {
         //add.htmlに遷移
         mav.setViewName("add");
-        //カテゴリのリストをモデルに追加
-        List<Category> categories = categoryService.getAllCategories();
-        mav.addObject("categories", categories);
+        //全ての支出のカテゴリーのレコードをviewにわたす
+        List<Category> expenseCategories = categoryService.getAllExpenseCategories();
+        mav.addObject("expenseCategories", expenseCategories);
+        //全ての収入のカテゴリーのレコードをviewにわたす
+        List<Category> incomeCategories = categoryService.getAllIncomeCategories();
+        mav.addObject("incomeCategories", incomeCategories);
         return mav;
 	}
+    
+    // 支出カテゴリーのリストを返すエンドポイント
+    @GetMapping("/api/categories/expense")
+    public ResponseEntity<List<Category>> getAllExpenseCategories() {
+        List<Category> expenseCategories = categoryService.getAllExpenseCategories();
+        return ResponseEntity.ok(expenseCategories);
+    }
+
+    // 収入カテゴリーのリストを返すエンドポイント
+    @GetMapping("/api/categories/income")
+    public ResponseEntity<List<Category>> getAllIncomeCategories() {
+        List<Category> incomeCategories = categoryService.getAllIncomeCategories();
+        return ResponseEntity.ok(incomeCategories);
+    }
 
     //account追加画面(post)
     @PostMapping("/add")
@@ -59,15 +77,12 @@ public class AccountController {
     public ModelAndView form(@ModelAttribute @Validated Account account, BindingResult result, ModelAndView mav) {
         //空のmavを作成
         ModelAndView res;
-        System.out.println("test");
         //エラーがなければ追加し、indexに戻る
         if (!result.hasErrors()) {
             accountService.saveAccount(account);
-            System.out.println("success!");
             res = new ModelAndView("redirect:/");
         //エラーがあればエラーメッセージを表示しindexに戻る
         } else {
-            System.out.println("error!");
             mav.setViewName("add");
             //カテゴリのリストをモデルに追加
             List<Category> categories = categoryService.getAllCategories();
@@ -89,9 +104,10 @@ public class AccountController {
         List<Account> incomeList = accountService.getAllIncome();
         mav.addObject("income", incomeList);
         
-        //カテゴリのリストをモデルに追加
+        //全てのカテゴリのレコードをviewにわたす
         List<Category> categories = categoryService.getAllCategories();
         mav.addObject("categories", categories);
+
     }
     
 
@@ -103,9 +119,15 @@ public class AccountController {
         //idに対応するAccountを取得し、formModelに渡す。（edit.htmlに渡す）
         Optional<Account> data = accountService.getAccountById(id);
         mav.addObject("account", data.get());
-        //プルダウン用にカテゴリを渡す
-        List<Category> categories = categoryService.getAllCategories();
-        mav.addObject("categories", categories);
+        //全ての支出のカテゴリーのレコードをviewにわたす
+        List<Category> expenseCategories = categoryService.getAllExpenseCategories();
+        mav.addObject("expenseCategories", expenseCategories);
+        //全ての収入のカテゴリーのレコードをviewにわたす
+        List<Category> incomeCategories = categoryService.getAllIncomeCategories();
+        mav.addObject("incomeCategories", incomeCategories);
+        // 現在選択されているカテゴリーIDをModelAndViewに追加
+        mav.addObject("selectedCategoryId", data.get().getCategory().getId());
+        mav.addObject("selectedBalanceType", data.get().isBalance());
         return mav;
     }
 
@@ -144,29 +166,51 @@ public class AccountController {
     //　統計用クラス(get)
     @GetMapping("/stat")
     public ModelAndView getstat(ModelAndView mav) {
-        //カテゴリー配列を作成
-        List<String> CategoryList = new ArrayList<String>();
+        //支出用のカテゴリー配列を作成
+        List<String> ExpenseCategoryList = new ArrayList<String>();
         //配列にカテゴリー名を全て代入する
-        for(int i = 0; i < categoryService.getAllCategories().size(); i++) {
-            CategoryList.add(categoryService.getAllCategories().get(i).getCategoryName());
+        for(int i = 0; i < categoryService.getAllExpenseCategories().size(); i++) {
+            ExpenseCategoryList.add(categoryService.getAllExpenseCategories().get(i).getCategoryName());
         }
 
-        //カテゴリごとの合計を入れる配列を作成
-        List<Integer> CategoryTotal =  new ArrayList<Integer>();
-        //配列にカテゴリーごとの値を代入する
-        for(int i = 0; i < categoryService.getAllCategories().size(); i++) {
-            CategoryTotal.add(0 + accountService.search(CategoryList.get(i)));
+        //支出のカテゴリごとの合計のpriceを入れる配列を作成
+        List<Integer> ExpenseCategoryTotal =  new ArrayList<Integer>();
+        //配列にカテゴリーごとのpriceの値を代入する
+        for(int i = 0; i < categoryService.getAllExpenseCategories().size(); i++) {
+            ExpenseCategoryTotal.add(0 + accountService.CategoryTotalPrice(ExpenseCategoryList.get(i)));
         }
 
-        //Listを配列に変換
-        String CategoryListLabel[] = CategoryList.toArray(new String [CategoryList.size()]);
-        //totalを配列に変換
-        Integer CategoryTotalLabel[] = CategoryTotal.toArray(new Integer [CategoryTotal.size()]);
+
+        //収入用のカテゴリー配列を作成
+        List<String> IncomeCategoryList = new ArrayList<String>();
+        //配列にカテゴリー名を全て代入する
+        for(int i = 0; i < categoryService.getAllIncomeCategories().size(); i++) {
+            IncomeCategoryList.add(categoryService.getAllIncomeCategories().get(i).getCategoryName());
+        }
+
+        //収入のカテゴリごとの合計のpriceを入れる配列を作成
+        List<Integer> IncomeCategoryTotal = new ArrayList<Integer>();
+        //配列にカテゴリーごとのpriceの値を代入する
+        for(int i = 0; i < categoryService.getAllIncomeCategories().size(); i++) {
+            IncomeCategoryTotal.add(0 + accountService.CategoryTotalPrice(IncomeCategoryList.get(i)));
+        }
+
+        //ExoenseListを配列に変換
+        String ExpenseCategoryListLabel[] = ExpenseCategoryList.toArray(new String [ExpenseCategoryList.size()]);
+        //Expensetotalを配列に変換
+        Integer ExpenseCategoryTotalLabel[] = ExpenseCategoryTotal.toArray(new Integer [ExpenseCategoryTotal.size()]);
+        //IncomeListを配列に変換
+        String IncomeCategoryListLabel[] = IncomeCategoryList.toArray(new String [IncomeCategoryList.size()]);
+        //Incometotalを配列に変換
+        Integer IncomeCategoryTotalLabel[] = IncomeCategoryTotal.toArray(new Integer [IncomeCategoryTotal.size()]);
         //モデルに追加
-        mav.addObject("CategoryList", CategoryListLabel);
-        mav.addObject("CategoryTotal", CategoryTotalLabel);
+        mav.addObject("ExpenseCategoryList", ExpenseCategoryListLabel);
+        mav.addObject("ExpenseCategoryTotal", ExpenseCategoryTotalLabel);
+        mav.addObject("IncomeCategoryList", IncomeCategoryListLabel);
+        mav.addObject("IncomeCategoryTotal", IncomeCategoryTotalLabel);
         mav.setViewName("stat");
         return mav;
     }
+    
     
 }

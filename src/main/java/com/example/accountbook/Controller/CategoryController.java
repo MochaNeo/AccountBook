@@ -59,6 +59,12 @@ public class CategoryController {
         // 全てのカテゴリーをviewにわたす
         List<Category> list = categoryService.getAllCategories();
         mav.addObject("data", list);
+        //全ての支出のカテゴリーのレコードをviewにわたす
+        List<Category> expenseCategories = categoryService.getAllExpenseCategories();
+        mav.addObject("expenseCategories", expenseCategories);
+        //全ての収入のカテゴリーのレコードをviewにわたす
+        List<Category> incomeCategories = categoryService.getAllIncomeCategories();
+        mav.addObject("incomeCategories", incomeCategories);
     }
 
     //カテゴリーの削除(post)
