@@ -28,14 +28,11 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Query("SELECT SUM(a.price) FROM Account a WHERE a.category.categoryName = :name")
     Integer findTotalPriceByCategoryContaining(String name);
     
-    //カテゴリーごとの月のpriceの総額を返す
-    @Query("SELECT a.category as category, SUM(a.price) as total FROM Account a " +
-            "WHERE a.date BETWEEN :startDate AND :endDate " +
-            "AND a.balance = :balance " +
-            "GROUP BY a.category")
-    List<Object[]> findTotalsByCategoryAndDateRangeAndBalance(
+    //カテゴリーと月でpriceの合計を返す
+    @Query("SELECT SUM(a.price) FROM Account a WHERE a.category.categoryName = :name AND a.date BETWEEN :startDate AND :endDate")
+    Integer findTotalPriceByCategoryAndDateRange(
+            @Param("name") String name, 
             @Param("startDate") Date startDate, 
-            @Param("endDate") Date endDate,
-            @Param("balance") boolean balance);
+            @Param("endDate") Date endDate);
 
 }

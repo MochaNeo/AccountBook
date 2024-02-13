@@ -42,6 +42,10 @@
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/add}" role="button">Add</a>
                     </li>
+                    <!--統計ページ-->
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/stat}" role="button">Stat</a>
+                    </li>
                 </ul>
                 <!--検索フォーム-->
                 <form class="d-flex" role="search" action="/search" method="post">
@@ -127,7 +131,6 @@
                 const select = document.getElementById('categorySelect');
                 select.innerHTML = ''; // 既存のオプションをクリア
                 categories.forEach(category => {
-                    // 'category.name' から 'category.categoryName' に修正してください
                     const option = new Option(category.categoryName, category.id);
                     select.appendChild(option);
                 });

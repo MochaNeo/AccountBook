@@ -1,5 +1,7 @@
 package com.example.accountbook.Service;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.accountbook.Entity.Account;
-import com.example.accountbook.Entity.Category;
 import com.example.accountbook.Repository.AccountRepository;
-
-import jakarta.annotation.PostConstruct;
 
 @Service
 public class AccountService {
@@ -54,9 +53,17 @@ public class AccountService {
         return repository.existsByCategoryId(categoryId);
     }
 
-    //カテゴリーごとのpriceの合計を返す(categoryにcategoryNameが含まれるもののpriceの合計)
-	public Integer CategoryTotalPrice(String category) {
-        Integer result = repository.findTotalPriceByCategoryContaining(category);
-        return result != null ? result : 0; // nullでない場合はそのまま、nullの場合は0を返す
-	}
+    //CategoryTotalPriceの代替メソッド
+    // 特定の年と月における特定のカテゴリーのpriceの合計を取得
+    public Integer findTotalPriceForCategoryInMonth(String categoryName, int year, int month) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month - 1, 1); // 月の初日
+        Date startDate = calendar.getTime();
+
+        calendar.add(Calendar.MONTH, 1);
+        calendar.add(Calendar.DATE, -1); // 月の最終日
+        Date endDate = calendar.getTime();
+
+        return repository.findTotalPriceByCategoryAndDateRange(categoryName, startDate, endDate);
+    }
 }

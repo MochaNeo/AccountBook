@@ -1,5 +1,7 @@
 package com.example.accountbook.Controller;
 
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -48,28 +50,9 @@ public class AccountController {
     public ModelAndView add(@ModelAttribute Account account, ModelAndView mav) {
         //add.htmlに遷移
         mav.setViewName("add");
-        //全ての支出のカテゴリーのレコードをviewにわたす
-        List<Category> expenseCategories = categoryService.getAllExpenseCategories();
-        mav.addObject("expenseCategories", expenseCategories);
-        //全ての収入のカテゴリーのレコードをviewにわたす
-        List<Category> incomeCategories = categoryService.getAllIncomeCategories();
-        mav.addObject("incomeCategories", incomeCategories);
         return mav;
 	}
     
-    // 支出カテゴリーのリストを返すエンドポイント
-    @GetMapping("/api/categories/expense")
-    public ResponseEntity<List<Category>> getAllExpenseCategories() {
-        List<Category> expenseCategories = categoryService.getAllExpenseCategories();
-        return ResponseEntity.ok(expenseCategories);
-    }
-
-    // 収入カテゴリーのリストを返すエンドポイント
-    @GetMapping("/api/categories/income")
-    public ResponseEntity<List<Category>> getAllIncomeCategories() {
-        List<Category> incomeCategories = categoryService.getAllIncomeCategories();
-        return ResponseEntity.ok(incomeCategories);
-    }
 
     //account追加画面(post)
     @PostMapping("/add")
@@ -165,52 +148,100 @@ public class AccountController {
 
     //　統計用クラス(get)
     @GetMapping("/stat")
-    public ModelAndView getstat(ModelAndView mav) {
+    public ModelAndView getStat(ModelAndView mav) {
         //支出用のカテゴリー配列を作成
         List<String> ExpenseCategoryList = new ArrayList<String>();
         //配列にカテゴリー名を全て代入する
         for(int i = 0; i < categoryService.getAllExpenseCategories().size(); i++) {
             ExpenseCategoryList.add(categoryService.getAllExpenseCategories().get(i).getCategoryName());
         }
-
-        //支出のカテゴリごとの合計のpriceを入れる配列を作成
-        List<Integer> ExpenseCategoryTotal =  new ArrayList<Integer>();
-        //配列にカテゴリーごとのpriceの値を代入する
-        for(int i = 0; i < categoryService.getAllExpenseCategories().size(); i++) {
-            ExpenseCategoryTotal.add(0 + accountService.CategoryTotalPrice(ExpenseCategoryList.get(i)));
-        }
-
-
         //収入用のカテゴリー配列を作成
         List<String> IncomeCategoryList = new ArrayList<String>();
         //配列にカテゴリー名を全て代入する
         for(int i = 0; i < categoryService.getAllIncomeCategories().size(); i++) {
             IncomeCategoryList.add(categoryService.getAllIncomeCategories().get(i).getCategoryName());
         }
-
-        //収入のカテゴリごとの合計のpriceを入れる配列を作成
-        List<Integer> IncomeCategoryTotal = new ArrayList<Integer>();
-        //配列にカテゴリーごとのpriceの値を代入する
-        for(int i = 0; i < categoryService.getAllIncomeCategories().size(); i++) {
-            IncomeCategoryTotal.add(0 + accountService.CategoryTotalPrice(IncomeCategoryList.get(i)));
-        }
-
-        //ExoenseListを配列に変換
+        //配列に変換
         String ExpenseCategoryListLabel[] = ExpenseCategoryList.toArray(new String [ExpenseCategoryList.size()]);
-        //Expensetotalを配列に変換
-        Integer ExpenseCategoryTotalLabel[] = ExpenseCategoryTotal.toArray(new Integer [ExpenseCategoryTotal.size()]);
-        //IncomeListを配列に変換
         String IncomeCategoryListLabel[] = IncomeCategoryList.toArray(new String [IncomeCategoryList.size()]);
-        //Incometotalを配列に変換
-        Integer IncomeCategoryTotalLabel[] = IncomeCategoryTotal.toArray(new Integer [IncomeCategoryTotal.size()]);
         //モデルに追加
         mav.addObject("ExpenseCategoryList", ExpenseCategoryListLabel);
-        mav.addObject("ExpenseCategoryTotal", ExpenseCategoryTotalLabel);
         mav.addObject("IncomeCategoryList", IncomeCategoryListLabel);
-        mav.addObject("IncomeCategoryTotal", IncomeCategoryTotalLabel);
         mav.setViewName("stat");
         return mav;
     }
     
-    
+
+    //addメソッド用
+    // 支出カテゴリーのリストを返すエンドポイント
+    @GetMapping("/api/categories/expense")
+    public ResponseEntity<List<Category>> getAllExpenseCategories() {
+        List<Category> expenseCategories = categoryService.getAllExpenseCategories();
+        return ResponseEntity.ok(expenseCategories);
+    }
+    // 収入カテゴリーのリストを返すエンドポイント
+    @GetMapping("/api/categories/income")
+    public ResponseEntity<List<Category>> getAllIncomeCategories() {
+        List<Category> incomeCategories = categoryService.getAllIncomeCategories();
+        return ResponseEntity.ok(incomeCategories);
+    }
+
+
+    //statメソッド用
+    // 日付を指定して支出データを取得するエンドポイント
+    @GetMapping("/api/categories/price/expense")
+    public ResponseEntity<Integer[]> getExpenseDataByDate(@RequestParam("date") String date) {
+        YearMonth parsedDate;
+        // 年月をパースするためのフォーマッターを定義
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+        // 受け取ったdateパラメータからYearMonthを生成
+        parsedDate = YearMonth.parse(date, formatter);
+        // 年と月をそれぞれ抽出
+        int year = parsedDate.getYear();
+        int month = parsedDate.getMonthValue();
+
+        //支出用のカテゴリー配列を作成
+        List<String> ExpenseCategoryList = new ArrayList<String>();
+        //配列にカテゴリー名を全て代入する
+        for(int i = 0; i < categoryService.getAllExpenseCategories().size(); i++) {
+            ExpenseCategoryList.add(categoryService.getAllExpenseCategories().get(i).getCategoryName());
+        }
+        //支出のカテゴリごとの合計のpriceを入れる配列を作成
+        List<Integer> ExpenseCategoryTotal =  new ArrayList<Integer>();
+        //配列にカテゴリーごとのpriceの値を代入する
+        for(int i = 0; i < categoryService.getAllExpenseCategories().size(); i++) {
+            ExpenseCategoryTotal.add(accountService.findTotalPriceForCategoryInMonth(ExpenseCategoryList.get(i), year, month));
+        }
+        Integer ExpenseCategoryTotalLabel[] = ExpenseCategoryTotal.toArray(new Integer [ExpenseCategoryTotal.size()]);
+        return ResponseEntity.ok(ExpenseCategoryTotalLabel);
+    }
+
+    // 日付を指定して収入データを取得するエンドポイント
+    @GetMapping("/api/categories/price/income")
+    public ResponseEntity<Integer[]> getIncomeDataByDate(@RequestParam("date") String date) {
+        YearMonth parsedDate;
+        // 年月をパースするためのフォーマッターを定義
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+        // 受け取ったdateパラメータからYearMonthを生成
+        parsedDate = YearMonth.parse(date, formatter);
+        // 年と月をそれぞれ抽出
+        int year = parsedDate.getYear();
+        int month = parsedDate.getMonthValue();
+        
+        //収入用のカテゴリー配列を作成
+        List<String> IncomeCategoryList = new ArrayList<String>();
+        //配列にカテゴリー名を全て代入する
+        for(int i = 0; i < categoryService.getAllIncomeCategories().size(); i++) {
+            IncomeCategoryList.add(categoryService.getAllIncomeCategories().get(i).getCategoryName());
+        }
+        //収入のカテゴリごとの合計のpriceを入れる配列を作成
+        List<Integer> IncomeCategoryTotal = new ArrayList<Integer>();
+        //配列にカテゴリーごとのpriceの値を代入する
+        for(int i = 0; i < categoryService.getAllIncomeCategories().size(); i++) {
+            IncomeCategoryTotal.add(accountService.findTotalPriceForCategoryInMonth(IncomeCategoryList.get(i), year, month));
+        }
+        Integer IncomeCategoryTotalLabel[] = IncomeCategoryTotal.toArray(new Integer [IncomeCategoryTotal.size()]);
+        return ResponseEntity.ok(IncomeCategoryTotalLabel);
+    }
+
 }
