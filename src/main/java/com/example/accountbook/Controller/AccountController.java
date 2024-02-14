@@ -164,7 +164,7 @@ public class AccountController {
     @GetMapping("/api/categories/price/income")
     public ResponseEntity<Integer[]> getIncomeDataByDate(@RequestParam("date") String date) {
         int year = accountService.parsedDateYear(date);
-        int month = accountService.parsedDateYear(date);
+        int month = accountService.parsedDateMonth(date);
         return accountService.findTotalPriceForMonth(categoryService.getAllIncomeCategories(), year, month);
     }
 
