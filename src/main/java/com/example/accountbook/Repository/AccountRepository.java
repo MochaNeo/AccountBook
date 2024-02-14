@@ -12,6 +12,7 @@ import com.example.accountbook.Entity.Account;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
+
     //カテゴリーが使われているか確認する
     boolean existsByCategoryId(long categoryId);
 
@@ -24,15 +25,10 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     //名前が含まれるレコードを検索する
     List<Account> findByNameContaining(String name);
 
-    //カテゴリーごとのpriceの合計を返す
-    @Query("SELECT SUM(a.price) FROM Account a WHERE a.category.categoryName = :name")
-    Integer findTotalPriceByCategoryContaining(String name);
-    
     //カテゴリーと月でpriceの合計を返す
     @Query("SELECT SUM(a.price) FROM Account a WHERE a.category.categoryName = :name AND a.date BETWEEN :startDate AND :endDate")
     Integer findTotalPriceByCategoryAndDateRange(
             @Param("name") String name, 
             @Param("startDate") Date startDate, 
             @Param("endDate") Date endDate);
-
 }

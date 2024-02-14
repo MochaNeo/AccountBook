@@ -1,5 +1,8 @@
 package com.example.accountbook.Service;
 
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -9,14 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.accountbook.Entity.Account;
+import com.example.accountbook.Entity.Category;
 import com.example.accountbook.Repository.AccountRepository;
+import org.springframework.http.ResponseEntity;
 
 @Service
 public class AccountService {
     
     @Autowired
     private AccountRepository repository;
-
 
     //全てのレコードを返す
     public List<Account> getAllAccounts() {
@@ -34,6 +38,7 @@ public class AccountService {
     }
 
     //アカウントを保存する
+    @SuppressWarnings("null")
     public void saveAccount(Account account) {
         repository.saveAndFlush(account);
     }
@@ -53,17 +58,58 @@ public class AccountService {
         return repository.existsByCategoryId(categoryId);
     }
 
-    //CategoryTotalPriceの代替メソッド
-    // 特定の年と月における特定のカテゴリーのpriceの合計を取得
+    //特定の年と月における特定のカテゴリーのpriceの合計を取得
     public Integer findTotalPriceForCategoryInMonth(String categoryName, int year, int month) {
         Calendar calendar = Calendar.getInstance();
-        calendar.set(year, month - 1, 1); // 月の初日
+        calendar.set(year, month - 1, 1); //月の初日
         Date startDate = calendar.getTime();
 
         calendar.add(Calendar.MONTH, 1);
-        calendar.add(Calendar.DATE, -1); // 月の最終日
+        calendar.add(Calendar.DATE, -1); //月の最終日
         Date endDate = calendar.getTime();
 
+        //カテゴリーごとの月のpriceの総額を返す
         return repository.findTotalPriceByCategoryAndDateRange(categoryName, startDate, endDate);
     }
+
+    //dateから年を取り出す
+    public int parsedDateYear(String date) {
+        YearMonth parsedDate;
+        //年月をパースするためのフォーマッターを定義
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+        //受け取ったdateパラメータからYearMonthを生成
+        parsedDate = YearMonth.parse(date, formatter);
+        //年を返す
+        return parsedDate.getYear();
+    }
+
+    //dateから月を取り出す
+    public int parsedDateMonth(String date) {
+        YearMonth parsedDate;
+        // 年月をパースするためのフォーマッターを定義
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
+        // 受け取ったdateパラメータからYearMonthを生成
+        parsedDate = YearMonth.parse(date, formatter);
+        //年を返す
+        return parsedDate.getMonthValue();
+    }
+
+    //該当月の合計の支出・収入額を調べる
+    public ResponseEntity<Integer[]> findTotalPriceForMonth(List<Category> categories, int year, int month) {
+        //配列を作成
+        List<String> CategoryList = new ArrayList<String>();
+        //配列にカテゴリー名をすべて代入する
+        for(int i = 0; i < categories.size(); i++) {
+            CategoryList.add(categories.get(i).getCategoryName());
+        }
+        //カテゴリごとの合計のpriceを入れる配列を作成
+        List<Integer> CategoryTotal = new ArrayList<Integer>();
+        //配列にカテゴリごとのpriceの値を代入する
+        for(int i = 0; i < CategoryList.size(); i++) {
+            CategoryTotal.add(findTotalPriceForCategoryInMonth(CategoryList.get(i), year, month));
+        }
+        Integer CategoryTotalLabel[] = CategoryTotal.toArray(new Integer [CategoryTotal.size()]);
+        return ResponseEntity.ok(CategoryTotalLabel);
+    }
+    
 }

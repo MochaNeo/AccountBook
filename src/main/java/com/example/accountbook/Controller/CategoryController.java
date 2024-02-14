@@ -1,7 +1,5 @@
 package com.example.accountbook.Controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -54,19 +52,6 @@ public class CategoryController {
         return res;
     }
 
-    //カテゴリーに共通するメソッド
-    private void addCategoryAttributes(ModelAndView mav) {
-        // 全てのカテゴリーをviewにわたす
-        List<Category> list = categoryService.getAllCategories();
-        mav.addObject("data", list);
-        //全ての支出のカテゴリーのレコードをviewにわたす
-        List<Category> expenseCategories = categoryService.getAllExpenseCategories();
-        mav.addObject("expenseCategories", expenseCategories);
-        //全ての収入のカテゴリーのレコードをviewにわたす
-        List<Category> incomeCategories = categoryService.getAllIncomeCategories();
-        mav.addObject("incomeCategories", incomeCategories);
-    }
-
     //カテゴリーの削除(post)
     @PostMapping("/categoryDelete/{id}")
     @Transactional
@@ -74,9 +59,8 @@ public class CategoryController {
         //空のmavを作成
         ModelAndView res;
         //カテゴリーが使用されているかチェックし、isCategoryInUseに入れる
-        boolean isCategoryInUse = accountService.isCategoryInUse(id);
         //カテゴリーが使用されていればエラーメッセージを表示し、categoryに戻る
-        if (isCategoryInUse) {
+        if (accountService.isCategoryInUse(id)) {
             mav.addObject("errorMessage", "カテゴリーは使用中です。");
             mav.setViewName("category");
             addCategoryAttributes(mav);
@@ -88,4 +72,16 @@ public class CategoryController {
         }
         return res;  
     }
+
+
+    //カテゴリーに共通するメソッド
+    private void addCategoryAttributes(ModelAndView mav) {
+        // 全てのカテゴリーをviewにわたす
+        mav.addObject("data", categoryService.getAllCategories());
+        //全ての支出のカテゴリーのレコードをviewにわたす
+        mav.addObject("expenseCategories", categoryService.getAllExpenseCategories());
+        //全ての収入のカテゴリーのレコードをviewにわたす
+        mav.addObject("incomeCategories", categoryService.getAllIncomeCategories());
+    }
+
 }

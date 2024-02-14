@@ -14,7 +14,7 @@
 <body class="container">
 	
     <!--ナビゲーションバー-->
-    <nav class="navbar navbar-expand-lg mb-4 ">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border">
         <div class="container-fluid">
             <!--タイトル-->
             <a class="navbar-brand fw-bolder link-dark fs-2" th:href="@{/}" role="button">AccountBook</a>
@@ -31,19 +31,19 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <!--ホーム-->
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/}" role="button" >Home</a>
+                        <a class="nav-link text-dark" th:href="@{/}" role="button" >Home</a>
                     </li>
                     <!--カテゴリーページ-->
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/category}" role="button">Category</a>
+                        <a class="nav-link text-dark" th:href="@{/category}" role="button">Category</a>
                     </li>
                     <!--アカウント追加ページ-->
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/add}" role="button">Add</a>
+                        <a class="nav-link text-dark" th:href="@{/add}" role="button">Add</a>
                     </li>
                     <!--統計ページ-->
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/stat}" role="button">Stat</a>
+                        <a class="nav-link text-dark" th:href="@{/stat}" role="button">Stat</a>
                     </li>
                 </ul>
                 <!--検索フォーム-->
@@ -103,13 +103,13 @@
         </div>
 		<script>
 			document.addEventListener('DOMContentLoaded', function() {
-				// selectedBalanceTypeの値を取得し、'true'なら'income'、そうでなければ'expense'を設定
+				//selectedBalanceTypeの値を取得し、'true'なら'income'、そうでなければ'expense'を設定
 				const selectedBalanceType = document.getElementById('selectedBalanceType').value === 'true' ? 'income' : 'expense';
 
-				// 初期カテゴリーデータのフェッチをselectedBalanceTypeに基づいて実行
+				//初期カテゴリーデータのフェッチをselectedBalanceTypeに基づいて実行
 				fetchCategoryData(selectedBalanceType);
 
-				// ラジオボタンの変更を監視し、変更があった場合にカテゴリーデータを再フェッチ
+				//ラジオボタンの変更を監視し、変更があった場合にカテゴリーデータを再フェッチ
 				document.querySelectorAll('input[name="balance"]').forEach((elem) => {
 					elem.addEventListener('change', function() {
 						const categoryType = this.id; // 'expense' または 'income'
@@ -119,7 +119,7 @@
 			});
 
 			function fetchCategoryData(categoryType) {
-				// サーバーから指定されたタイプのカテゴリーデータをフェッチ
+				//サーバーから指定されたタイプのカテゴリーデータをフェッチ
 				const url = `/api/categories/${categoryType}`;
 				fetch(url)
 					.then(response => response.json())
@@ -132,10 +132,10 @@
 			function updateCategorySelect(categories) {
 				const select = document.getElementById('categorySelect');
 				const selectedCategoryId = document.getElementById('selectedCategoryId').value;
-				select.innerHTML = ''; // 既存のオプションをクリア
+				select.innerHTML = '';
 				categories.forEach(category => {
 					const option = new Option(category.categoryName, category.id);
-					// サーバーから渡されたカテゴリーIDと一致する場合、選択状態にする
+					//サーバーから渡されたカテゴリーIDと一致する場合、選択状態にする
 					if(category.id.toString() === selectedCategoryId) {
 						option.selected = true;
 					}

@@ -1,5 +1,6 @@
 package com.example.accountbook.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,6 @@ public class CategoryService {
     @Autowired
     private CategoryRepository repository;
 
-
-
     //全てのカテゴリーを返す
     public List<Category> getAllCategories() {
         return repository.findAll();
@@ -33,22 +32,47 @@ public class CategoryService {
         return repository.findByBalanceTrue();
     }
 
-    //すべてのカテゴリーの名前を配列で返す
+    //全てのカテゴリーの名前を配列で返す
     public List<String> getAllCategoriesName() {
         return repository.findAllCategoryName();
     }
 
-    //カテゴリーを保存する(データベースに保存)
+    //全ての支出のカテゴリーの名前を返す
+    public String[] getAllExpenseCategoriesName() {
+        //配列を作成
+        List<String> CategoryNameList = new ArrayList<String>();
+        List<Category> categories = repository.findByBalanceFalse();
+        //配列にカテゴリー名を全て代入する
+        for(int i = 0; i < categories.size(); i++) {
+            CategoryNameList.add(categories.get(i).getCategoryName());
+        }
+        return CategoryNameList.toArray(new String [CategoryNameList.size()]);
+	}
+    
+    //全ての収入のカテゴリーの名前を返す
+    public String[] getAllIncomeCategoriesName() {
+        //配列を作成
+        List<String> CategoryNameList = new ArrayList<String>();
+        List<Category> categories = repository.findByBalanceTrue();
+        //配列にカテゴリー名を全て代入する
+        for(int i = 0; i < categories.size(); i++) {
+            CategoryNameList.add(categories.get(i).getCategoryName());
+        }
+        return CategoryNameList.toArray(new String [CategoryNameList.size()]);
+	}
+
+    //カテゴリーを保存
+    @SuppressWarnings("null")
     public void saveCategory(Category category) {
         repository.saveAndFlush(category);
     }
 
-    //idに該当するカテゴリーを削除する
+    //カテゴリーを削除
     public void deleteCategory(long id) {
         repository.deleteById(id);
     }
 
-    //カテゴリーのデフォルトデータを作成する(データベースに保存)
+    //カテゴリーのデフォルトデータを作成（テスト用）
     @PostConstruct
     public void init() {
         //食費

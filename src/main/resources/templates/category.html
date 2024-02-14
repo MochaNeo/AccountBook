@@ -15,7 +15,7 @@
 <body class="container">
 
     <!--ナビゲーションバー-->
-    <nav class="navbar navbar-expand-lg mb-4 ">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border">
         <div class="container-fluid">
             <!--タイトル-->
             <a class="navbar-brand fw-bolder link-dark fs-2" th:href="@{/}" role="button">AccountBook</a>
@@ -32,19 +32,19 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <!--ホーム-->
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/}" role="button" >Home</a>
+                        <a class="nav-link text-dark" th:href="@{/}" role="button" >Home</a>
                     </li>
                     <!--カテゴリーページ-->
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/category}" role="button">Category</a>
+                        <a class="nav-link text-dark" th:href="@{/category}" role="button">Category</a>
                     </li>
                     <!--アカウント追加ページ-->
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/add}" role="button">Add</a>
+                        <a class="nav-link text-dark" th:href="@{/add}" role="button">Add</a>
                     </li>
                     <!--統計ページ-->
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/stat}" role="button">Stat</a>
+                        <a class="nav-link text-dark" th:href="@{/stat}" role="button">Stat</a>
                     </li>
                 </ul>
                 <!--検索フォーム-->
@@ -153,9 +153,6 @@
     
     
     
-
-
-
     <!-- Deleteモーダル -->
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">

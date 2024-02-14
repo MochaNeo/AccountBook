@@ -26,7 +26,7 @@
 <body class="container">
 
     <!--ナビゲーションバー-->
-    <nav class="navbar navbar-expand-lg mb-4 ">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border">
         <div class="container-fluid">
             <!--タイトル-->
             <a class="navbar-brand fw-bolder link-dark fs-2" th:href="@{/}" role="button">AccountBook</a>
@@ -43,19 +43,19 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <!--ホーム-->
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/}" role="button" >Home</a>
+                        <a class="nav-link text-dark" th:href="@{/}" role="button" >Home</a>
                     </li>
                     <!--カテゴリーページ-->
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/category}" role="button">Category</a>
+                        <a class="nav-link text-dark" th:href="@{/category}" role="button">Category</a>
                     </li>
                     <!--アカウント追加ページ-->
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/add}" role="button">Add</a>
+                        <a class="nav-link text-dark" th:href="@{/add}" role="button">Add</a>
                     </li>
                     <!--統計ページ-->
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/stat}" role="button">Stat</a>
+                        <a class="nav-link text-dark" th:href="@{/stat}" role="button">Stat</a>
                     </li>
                 </ul>
                 <!--検索フォーム-->
@@ -69,7 +69,7 @@
 
     <!--タブ（大）-->
     <div class="container mt-4">
-        <ul class="nav nav-pills nav-fill">
+        <ul class="nav nav-tabs">
             <li class="nav-item active">
                 <a class="nav-link active" id="day-tab" data-bs-toggle="tab" href="#day">Day</a>
             </li>
@@ -80,8 +80,31 @@
         <div class="tab-content mt-2">
             <!--タブ（day）-->
             <div class="tab-pane fade show active" id="day">
+                <!-- 日付 -->
+                <div class="container">
+                    <div class="row">
+                        <h4 class="display-6 mb-2 fw-bolder col-md-6" id="currentDate"></h4>
+                        
+                        <!--一日のincome, expense, totalの表示-->
+                        <li class="list-group list-group-horizontal col-md-4">
+                            <ul class="list-group-item" id="dayTotal"></ul>
+                            <ul class="list-group-item" id="dayExpense"></ul>
+                            <ul class="list-group-item" id="dayIncome"></ul>
+                        </li>
+                        
+                        <!-- 日付変更ボタン -->
+                        <div class="btn-group col-md-2" role= "group" aria-label="Basic example">
+                            <button type="button" class="btn btn-primary" onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i> </button>
+                            <button type="button" class="btn btn-primary" onclick="changeDate(-1)"><i class="fas fa-chevron-left"></i> </button>
+                            <button type="button" class="btn btn-primary" onclick="updateToday()"><i class="fas fa-calendar-day"></i> </button>
+                            <button type="button" class="btn btn-primary" onclick="changeDate(1)"> <i class="fas fa-chevron-right"></i></button>
+                            <button type="button" class="btn btn-primary" onclick="changeMonth(1)"> <i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="container mt-4">
-                    <ul class="nav nav-pills nav-fill">
+                    <ul class="nav nav-pills">
                         <li class="nav-item active">
                             <a class="nav-link active" id="total-tab" data-bs-toggle="tab" href="#total">Total</a>
                         </li>
@@ -94,42 +117,7 @@
                     </ul>
                     <div class="tab-content mt-2">
 
-                        <!-- 日付 -->
-                        <div class="container">
-                            <h4 class="display-6 mb-2 float-start fw-bolder" id="currentDate"></h4>
-                                <!-- 日付変更ボタン -->
-                                <div class="btn-group float-end" role= "group" aria-label="Basic example">
-                                    <button type="button" class="btn btn-primary" onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i> </button>
-                                    <button type="button" class="btn btn-primary" onclick="changeDate(-1)"><i class="fas fa-chevron-left"></i> </button>
-                                    <button type="button" class="btn btn-primary" onclick="updateToday()"><i class="fas fa-calendar-day"></i> </button>
-                                    <button type="button" class="btn btn-primary" onclick="changeDate(1)"> <i class="fas fa-chevron-right"></i></button>
-                                    <button type="button" class="btn btn-primary" onclick="changeMonth(1)"> <i class="fas fa-chevron-right"></i></button>
-                                </div>
-                                <!-- 日付の変更用スクリプト -->
-                                <script>
-                                    //現在の日付から指定された月数を加減する (setMonthメソッドを使用)。
-                                    function changeMonth(months) {
-                                        currentDate.setMonth(currentDate.getMonth() + months);
-                                        updateDate();
-                                    }
-                                    //現在の日付に指定された日数を加減する (setDateメソッドを使用)。
-                                    function changeDate(days) {
-                                        currentDate.setDate(currentDate.getDate() + days);
-                                        updateDate();
-                                    }
-                                    //現在の日付を今日の日付にリセットする。
-                                    function updateToday() {
-                                        currentDate = new Date();
-                                        updateDate();
-                                    }
-                                </script>
-                                <!--一日のincome, expense, totalの表示-->
-                                <li class="list-group list-group-horizontal float-end">
-                                    <ul class="list-group-item" id="dayTotal"></ul>
-                                    <ul class="list-group-item" id="dayExpense"></ul>
-                                    <ul class="list-group-item" id="dayIncome"></ul>
-                                </li>
-                        </div>
+
 
                         <!-- テーブル一覧（収支） -->
                         <div class="tab-pane fade show active mb-4" id="total">
@@ -360,8 +348,24 @@
         </div>
     </div>
 
-
-
+    <!-- 日付の変更用スクリプト -->
+    <script>
+        //現在の日付から指定された月数を加減する (setMonthメソッドを使用)。
+        function changeMonth(months) {
+            currentDate.setMonth(currentDate.getMonth() + months);
+            updateDate();
+        }
+        //現在の日付に指定された日数を加減する (setDateメソッドを使用)。
+        function changeDate(days) {
+            currentDate.setDate(currentDate.getDate() + days);
+            updateDate();
+        }
+        //現在の日付を今日の日付にリセットする。
+        function updateToday() {
+            currentDate = new Date();
+            updateDate();
+        }
+    </script>
 
     <script>
         var currentDateElement = document.getElementById('currentDate');

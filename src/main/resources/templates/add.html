@@ -15,7 +15,7 @@
 <body class="container">
 
     <!--ナビゲーションバー-->
-    <nav class="navbar navbar-expand-lg mb-4 ">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border">
         <div class="container-fluid">
             <!--タイトル-->
             <a class="navbar-brand fw-bolder link-dark fs-2" th:href="@{/}" role="button">AccountBook</a>
@@ -32,19 +32,19 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <!--ホーム-->
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/}" role="button" >Home</a>
+                        <a class="nav-link text-dark" th:href="@{/}" role="button" >Home</a>
                     </li>
                     <!--カテゴリーページ-->
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/category}" role="button">Category</a>
+                        <a class="nav-link text-dark" th:href="@{/category}" role="button">Category</a>
                     </li>
                     <!--アカウント追加ページ-->
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/add}" role="button">Add</a>
+                        <a class="nav-link text-dark" th:href="@{/add}" role="button">Add</a>
                     </li>
                     <!--統計ページ-->
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/stat}" role="button">Stat</a>
+                        <a class="nav-link text-dark" th:href="@{/stat}" role="button">Stat</a>
                     </li>
                 </ul>
                 <!--検索フォーム-->
@@ -58,11 +58,6 @@
 
     <!--タイトル-->
     <h1 class="display-4 mb-4">Add</h1>
-
-    <!--ホームに戻る-->
-    <div class="mb-4">
-        <a th:href="@{/}" class="btn btn-secondary">Back</a>
-    </div>
   
     <!--入力フォーム-->
     <form method="post" action="/add" th:object="${account}">
@@ -105,20 +100,19 @@
         </div>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
-                // ラジオボタンの変更を監視
+                //ラジオボタンの変更を監視
                 document.querySelectorAll('input[name="balance"]').forEach((elem) => {
                     elem.addEventListener('change', function() {
                         const categoryType = this.id; // 'expense' または 'income'
                         fetchCategoryData(categoryType);
                     });
                 });
-
-                // デフォルトで支出カテゴリーを表示
+                //デフォルトで支出カテゴリーを表示
                 fetchCategoryData('expense');
             });
 
             function fetchCategoryData(categoryType) {
-                const url = `/api/categories/${categoryType}`; // 適切なエンドポイントを指定
+                const url = `/api/categories/${categoryType}`;
                 fetch(url)
                     .then(response => response.json())
                     .then(data => {
@@ -129,7 +123,7 @@
 
             function updateCategorySelect(categories) {
                 const select = document.getElementById('categorySelect');
-                select.innerHTML = ''; // 既存のオプションをクリア
+                select.innerHTML = '';
                 categories.forEach(category => {
                     const option = new Option(category.categoryName, category.id);
                     select.appendChild(option);

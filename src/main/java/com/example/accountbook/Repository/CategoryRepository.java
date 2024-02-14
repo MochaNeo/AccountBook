@@ -17,5 +17,4 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     //収入のレコードを全て検索する
     List<Category> findByBalanceTrue();
-
 }
