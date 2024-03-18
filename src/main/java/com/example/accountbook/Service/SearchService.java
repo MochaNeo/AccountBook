@@ -13,7 +13,7 @@ public class SearchService {
 
     @Autowired
     AccountRepository repository;
-    
+
     //検索処理の実行
 	public List<Account> search(String name) {
         return repository.findByNameContaining(name);

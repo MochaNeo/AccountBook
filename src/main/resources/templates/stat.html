@@ -5,15 +5,15 @@
     <title>top page</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-  	<!-- Bootstrap CSS -->
-  	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <!-- Chart.jsの追加 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -26,9 +26,9 @@
             <!--タイトル-->
             <a class="navbar-brand fw-bolder link-dark fs-2" th:href="@{/}" role="button">AccountBook</a>
                 <!--ハンバーガーボタン-->
-                <button class="navbar-toggler navbar-light" type="button" 
-                data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" 
-                aria-controls="navbarSupportedContent" aria-expanded="false" 
+                <button class="navbar-toggler navbar-light" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -86,7 +86,7 @@
                 currentDate.setMonth(currentDate.getMonth() + months);
                 updateDate();
             }
-            
+
             //現在の日付を今日の日付にリセットする。
             function updateToday() {
                 currentDate = new Date();
@@ -106,8 +106,8 @@
             </div>
         </div>
     </div>
-    
-    
+
+
     <!--グラフ用スクリプト-->
     <script th:inline="javascript">
         /*<![CDATA[*/

@@ -32,7 +32,7 @@ public class CategoryController {
         addCategoryAttributes(mav);
         return mav;
     }
-    
+
     //カテゴリー追加(post)
     @PostMapping("/category")
     @Transactional
@@ -70,7 +70,7 @@ public class CategoryController {
             categoryService.deleteCategory(id);
             res = new ModelAndView("redirect:/category");
         }
-        return res;  
+        return res;
     }
 
 
@@ -83,5 +83,4 @@ public class CategoryController {
         //全ての収入のカテゴリーのレコードをviewにわたす
         mav.addObject("incomeCategories", categoryService.getAllIncomeCategories());
     }
-
 }

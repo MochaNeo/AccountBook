@@ -18,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 
 @Service
 public class AccountService {
-    
     @Autowired
     private AccountRepository repository;
 
@@ -26,7 +25,7 @@ public class AccountService {
     public List<Account> getAllAccounts() {
         return repository.findAll();
     }
-        
+
     //全ての支出のレコードを返す(balanceがfalseのもの)
     public List<Account> getAllExpense() {
         return repository.findByBalanceFalse();
@@ -111,5 +110,4 @@ public class AccountService {
         Integer CategoryTotalLabel[] = CategoryTotal.toArray(new Integer [CategoryTotal.size()]);
         return ResponseEntity.ok(CategoryTotalLabel);
     }
-    
 }

@@ -26,14 +26,14 @@ import jakarta.transaction.Transactional;
 
 @Controller
 public class AccountController {
-  
+
     @Autowired
     private AccountService accountService;
     @Autowired
     private CategoryService categoryService;
     @Autowired
     private SearchService searchService;
-    
+
     //index(get)
     @RequestMapping("/")
     public ModelAndView index(@ModelAttribute Account account, ModelAndView mav) {
@@ -66,7 +66,7 @@ public class AccountController {
         }
         return res;
     }
-    
+
     //edit(get)
     @GetMapping("/edit/{id}")
     public ModelAndView edit(@ModelAttribute Account Account, @PathVariable long id, ModelAndView mav) {
@@ -98,7 +98,7 @@ public class AccountController {
         accountService.deleteAccount(id);
         return new ModelAndView("redirect:/");
     }
-    
+
     //search(post)
     @PostMapping("/search")
     public ModelAndView search(@RequestParam("name") String name, ModelAndView mav) {
@@ -123,7 +123,6 @@ public class AccountController {
     }
 
 
-
     //アカウントの共通の属性を追加するメソッド
     private void addAccountAttributes(ModelAndView mav) {
         //全てのレコードをviewにわたす
@@ -133,9 +132,8 @@ public class AccountController {
         //全ての収入のレコードをviewにわたす
         mav.addObject("income", accountService.getAllIncome());
     }
-    
-    
-    
+
+
     //addメソッド用
     // 支出カテゴリーリストを返すエンドポイント
     @GetMapping("/api/categories/expense")
@@ -149,8 +147,7 @@ public class AccountController {
         return ResponseEntity.ok(categoryService.getAllIncomeCategories());
     }
 
-    
-    
+
     //statメソッド用
     // 日付を指定して支出データを取得するエンドポイント
     @GetMapping("/api/categories/price/expense")
@@ -167,5 +164,4 @@ public class AccountController {
         int month = accountService.parsedDateMonth(date);
         return accountService.findTotalPriceForMonth(categoryService.getAllIncomeCategories(), year, month);
     }
-
 }

@@ -48,7 +48,7 @@ public class CategoryService {
         }
         return CategoryNameList.toArray(new String [CategoryNameList.size()]);
 	}
-    
+
     //全ての収入のカテゴリーの名前を返す
     public String[] getAllIncomeCategoriesName() {
         //配列を作成
